@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MIDEREC - Community Proposals</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Montserrat:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e5e2e1",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#b2c7f3",
+                        "on-primary-container": "#fff9f8",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#ffb4ac",
+                        "secondary-fixed": "#d7e3ff",
+                        "on-secondary-fixed": "#011b3e",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-container-high": "#ebe7e7",
+                        "primary-container": "#e31b23",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface": "#fcf9f8",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-surface-variant": "#5d3f3c",
+                        "on-secondary-container": "#455a80",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#5a5b5c",
+                        "secondary": "#4a5f85",
+                        "background": "#fcf9f8",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#e7bdb8",
+                        "primary-fixed": "#ffdad6",
+                        "surface-variant": "#e5e2e1",
+                        "tertiary-container": "#727474",
+                        "surface-dim": "#dcd9d9",
+                        "on-surface": "#1c1b1b",
+                        "on-primary-fixed": "#410002",
+                        "surface-tint": "#c00015",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#93000d",
+                        "on-secondary-fixed-variant": "#32476c",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "surface-container-low": "#f6f3f2",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#fbfbfb",
+                        "outline": "#926e6b",
+                        "primary": "#b90014",
+                        "secondary-container": "#bdd2fe",
+                        "surface-container": "#f0edec",
+                        "surface-bright": "#fcf9f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "2rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "1.5rem",
+                        "stack-md": "1rem",
+                        "section-gap": "3rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-sm": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "label-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-lg": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- Sidebar Component -->
+<aside class="hidden md:flex flex-col bg-on-secondary-fixed fixed left-0 top-0 h-screen w-64 border-r border-outline-variant py-8 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.1)]">
+<div class="px-6 mb-8 flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary" data-weight="fill">sports_score</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-sm font-bold text-secondary-fixed">SAN JUAN</h1>
+<p class="font-label-md text-label-md text-secondary-fixed-dim uppercase tracking-wider">Sports Excellence</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-2 mt-4">
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">map</span>
+<span>Provincial Hub</span>
+</a>
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Athlete Registry</span>
+</a>
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">stadium</span>
+<span>Facility Management</span>
+</a>
+<a class="bg-on-secondary-fixed-variant text-on-primary-container border-l-4 border-primary px-4 py-3 flex items-center gap-3 active:scale-95 transition-transform font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">history</span>
+<span>Activity Logs</span>
+</a>
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="mt-auto px-2">
+<a class="text-secondary-fixed px-4 py-3 flex items-center gap-3 hover:bg-on-secondary-container transition-all font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 flex flex-col w-full md:pl-64">
+<!-- TopNavBar Component -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40 flat no shadows">
+<div class="flex items-center gap-4">
+<div class="font-headline-md text-headline-md font-bold text-primary">MIDEREC SAN JUAN</div>
+</div>
+<!-- Left Search Alignment -->
+<div class="flex-1 max-w-md ml-8 mr-auto relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant focus:border-primary focus:border-2 text-on-surface font-body-md text-body-md py-2 pl-10 pr-4 rounded-none outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Search proposals, venues, contacts..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container border border-outline-variant overflow-hidden shrink-0">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a mid-level government sports administrator in a sharp navy blazer, set against a bright, modern office backdrop with high-key lighting. The scene conveys authority, clean structure, and institutional reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUHZ6w1D9631G5RYFoQGa3SO5VZ6Gr6iWnfy03aD5y6iX7wIt9KWR-0XWBHO5E_uhCt3h5YF__SAUw7VlCrnu5eueuYw84AI0bIUQEIX64To9JEYDdPogBMllgkelELofNotUp4IYsQJ55RG86dhIySA3rV7cSVPqCcv_hTz_Fcd2qJakh0P6Eu-WGYX5tRYiPXOMtKlg0rVAByfef8ljgrj3VYjONOQcyGA7h3lZuIxnEke4UQ0LigwdS4xmi2ey2oKP3yNJRj40"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="p-4 md:p-container-margin w-full max-w-[1600px] mx-auto flex flex-col gap-section-gap">
+<!-- Header Section -->
+<section class="flex flex-col gap-stack-md">
+<div class="flex items-center gap-4">
+<div class="w-1 h-8 bg-primary"></div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">Community Proposals</h2>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">Manage and review event submissions from local community organizers and provincial sports federations.</p>
+</section>
+<!-- Metrics Bento -->
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-16 h-16 bg-surface-container-highest rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase relative z-10">Total Submissions</span>
+<span class="font-display-lg text-display-lg text-on-surface relative z-10">142</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col justify-between h-32 relative overflow-hidden group border-b-4 border-b-primary">
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase relative z-10">Pending Review</span>
+<span class="font-display-lg text-display-lg text-primary relative z-10">24</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase relative z-10">Approved</span>
+<span class="font-display-lg text-display-lg text-on-secondary-container relative z-10">98</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
+<span class="font-label-lg text-label-lg text-on-surface-variant uppercase relative z-10">Rejected</span>
+<span class="font-display-lg text-display-lg text-tertiary relative z-10">20</span>
+</div>
+</section>
+<!-- Proposals Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-primary p-6 flex flex-col gap-6 relative shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="bg-primary text-on-primary font-label-md text-label-md px-3 py-1 uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> Pendiente de Revisión</span>
+<span class="bg-secondary text-on-secondary font-label-md text-label-md px-2 py-1 uppercase">Basketball</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Torneo de Verano Sub-18</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Un torneo comunitario para jóvenes de la región sur, buscando fomentar el deporte y crear espacios seguros de competencia durante el receso escolar.</p>
+</div>
+<div class="flex flex-col gap-3 p-4 bg-surface-container-low border border-outline-variant/50">
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">stadium</span>
+<span class="uppercase">Polideportivo San Juan</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="uppercase">15 Agosto - 30 Agosto 2024</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">person</span>
+<span class="uppercase">Carlos Mendoza (Junta de Vecinos)</span>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-3 items-center justify-between">
+<div class="flex gap-2 flex-1">
+<button class="flex-1 bg-primary text-on-primary font-label-lg text-label-lg uppercase px-4 py-3 hover:bg-surface-tint transition-colors flex items-center justify-center gap-2">
+                                Aprobar <span class="material-symbols-outlined text-[18px]">publish</span>
+</button>
+<button class="border-2 border-secondary text-secondary font-label-lg text-label-lg uppercase px-4 py-3 hover:bg-secondary-container transition-colors">
+                                Rechazar
+                            </button>
+</div>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant text-secondary hover:text-primary hover:border-primary transition-colors shrink-0" title="Notas del Admin">
+<span class="material-symbols-outlined">speaker_notes</span>
+</button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-secondary p-6 flex flex-col gap-6 relative shadow-sm hover:border-secondary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="bg-surface-container-highest text-on-surface-variant font-label-md text-label-md px-3 py-1 uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> En Evaluación</span>
+<span class="bg-on-secondary-container text-on-secondary font-label-md text-label-md px-2 py-1 uppercase">Volleyball</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Clínica de Voleibol Femenino</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Talleres intensivos de técnica y estrategia deportiva dirigidos por ex-atletas de la selección nacional para niñas de 12 a 16 años.</p>
+</div>
+<div class="flex flex-col gap-3 p-4 bg-surface-container-low border border-outline-variant/50">
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">stadium</span>
+<span class="uppercase">Cancha Municipal Las Matas</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="uppercase">05 Septiembre 2024</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">person</span>
+<span class="uppercase">Ana Gómez (Club Deportivo)</span>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-3 items-center justify-between opacity-75 grayscale-[20%] pointer-events-none">
+<div class="flex gap-2 flex-1">
+<button class="flex-1 bg-primary text-on-primary font-label-lg text-label-lg uppercase px-4 py-3">Aprobar</button>
+<button class="border-2 border-secondary text-secondary font-label-lg text-label-lg uppercase px-4 py-3">Rechazar</button>
+</div>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant text-secondary shrink-0">
+<span class="material-symbols-outlined">speaker_notes</span>
+</button>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-primary p-6 flex flex-col gap-6 relative shadow-sm hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<span class="bg-primary text-on-primary font-label-md text-label-md px-3 py-1 uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> Pendiente de Revisión</span>
+<span class="bg-secondary text-on-secondary font-label-md text-label-md px-2 py-1 uppercase">Athletics</span>
+</div>
+<div class="flex flex-col gap-2">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Maratón Provincial de la Juventud</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Evento masivo de atletismo 5K y 10K para celebrar el día de la juventud, requiriendo apoyo logístico y cierre de vías principales.</p>
+</div>
+<div class="flex flex-col gap-3 p-4 bg-surface-container-low border border-outline-variant/50">
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">stadium</span>
+<span class="uppercase">Ruta Centro Ciudad</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="uppercase">12 Octubre 2024</span>
+</div>
+<div class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">person</span>
+<span class="uppercase">Comité Fiestas Patronales</span>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant flex gap-3 items-center justify-between">
+<div class="flex gap-2 flex-1">
+<button class="flex-1 bg-primary text-on-primary font-label-lg text-label-lg uppercase px-4 py-3 hover:bg-surface-tint transition-colors flex items-center justify-center gap-2">
+                                Aprobar <span class="material-symbols-outlined text-[18px]">publish</span>
+</button>
+<button class="border-2 border-secondary text-secondary font-label-lg text-label-lg uppercase px-4 py-3 hover:bg-secondary-container transition-colors">
+                                Rechazar
+                            </button>
+</div>
+<button class="w-12 h-12 flex items-center justify-center border border-outline-variant text-secondary hover:text-primary hover:border-primary transition-colors shrink-0" title="Notas del Admin">
+<span class="material-symbols-outlined">speaker_notes</span>
+</button>
+</div>
+</article>
+</section>
+</div>
+</main>
+</body></html>

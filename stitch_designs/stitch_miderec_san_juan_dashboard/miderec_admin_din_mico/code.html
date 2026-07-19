@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MIDEREC San Juan - Facility Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Hanken+Grotesk:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#454747",
+                        "tertiary": "#5a5b5c",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "outline-variant": "#e7bdb8",
+                        "on-surface-variant": "#5d3f3c",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "secondary-fixed": "#d7e3ff",
+                        "surface-variant": "#e5e2e1",
+                        "inverse-primary": "#ffb4ac",
+                        "on-secondary-fixed": "#011b3e",
+                        "surface-bright": "#fcf9f8",
+                        "surface-container-high": "#ebe7e7",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#bdd2fe",
+                        "on-secondary-fixed-variant": "#32476c",
+                        "inverse-surface": "#313030",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#926e6b",
+                        "on-secondary-container": "#455a80",
+                        "secondary": "#4a5f85",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "background": "#fcf9f8",
+                        "on-primary-container": "#fff9f8",
+                        "surface-container-highest": "#e5e2e1",
+                        "primary-container": "#e31b23",
+                        "primary-fixed": "#ffdad6",
+                        "tertiary-fixed": "#e2e2e2",
+                        "inverse-on-surface": "#f3f0ef",
+                        "primary-fixed-dim": "#ffb4ac",
+                        "tertiary-container": "#727474",
+                        "secondary-fixed-dim": "#b2c7f3",
+                        "surface-container": "#f0edec",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface": "#fcf9f8",
+                        "on-primary-fixed": "#410002",
+                        "on-primary-fixed-variant": "#93000d",
+                        "surface-dim": "#dcd9d9",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1c1b1b",
+                        "surface-tint": "#c00015",
+                        "on-tertiary-container": "#fbfbfb",
+                        "on-error": "#ffffff",
+                        "primary": "#b90014",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "3rem",
+                        "gutter": "1.5rem",
+                        "stack-lg": "1.5rem",
+                        "stack-md": "1rem",
+                        "stack-sm": "0.5rem",
+                        "container-margin": "2rem"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "label-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-sm": ["Montserrat"],
+                        "headline-md": ["Montserrat"],
+                        "display-lg": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .gradient-subtle {
+            background: linear-gradient(135deg, rgba(74, 95, 133, 0.05) 0%, rgba(185, 0, 20, 0.05) 100%);
+        }
+        .bento-card {
+            border: 1px solid #e7bdb8;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .bento-card-active {
+            border: 1px solid #b90014;
+        }
+        .bento-card-header {
+            border-bottom: 1px solid #e7bdb8;
+        }
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar -->
+<nav class="docked full-width top-0 border-b border-outline-variant flat no shadows bg-surface text-primary flex justify-between items-center h-16 px-gutter ml-64 w-[calc(100%-16rem)] fixed z-50">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary">MIDEREC San Juan</span>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="relative hidden md:block">
+<input class="border border-secondary rounded-DEFAULT py-1.5 pl-10 pr-4 text-label-md bg-surface-bright focus:border-primary focus:border-2 focus:outline-none w-64 h-10 font-label-md" placeholder="Search facilities..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-secondary" style="font-variation-settings: 'FILL' 0;">search</span>
+</div>
+<!-- Actions -->
+<button class="hover:text-primary transition-colors text-on-surface-variant p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="hover:text-primary transition-colors text-on-surface-variant p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+<!-- Profile -->
+<div class="flex items-center gap-2 cursor-pointer hover:text-primary transition-colors">
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full object-cover border border-secondary" data-alt="A small circular profile avatar showing a professional administrator in a brightly lit office setting, institutional style, crisp details, blue and red subtle lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxsSbAyeo48il62vHAPIQAWH-dEOkLKNUic44tHMw-gQSRgCwStxGkCM1f1jwVPKRd3riZ6Xv9GftVZ7pad5FDbhNAWYJrenpft0Gub98omf-TjbV9puf0gbSDi2JeptQmp-iisRBuI2MFBY_h1q57X_Y4lnMJzcpxH7fwvx5IZSuUEgdKkyuKbMtzTF8ftcGxUDX5fG0OMGL2ccnXfDKDpFoIpS9kf88buHd0KI0F35YGg9d-j6GgZ7HyIQQbUAkkVuqGl7IK1BE"/>
+<span class="font-label-lg text-label-lg uppercase hidden lg:block text-on-surface-variant">Profile</span>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed h-full left-0 top-0 w-64 border-r border-outline-variant flat no shadows flex flex-col bg-on-secondary-fixed-variant text-primary z-50">
+<!-- Header -->
+<div class="p-6 border-b border-secondary/20 mb-4 flex flex-col items-center justify-center text-center">
+<img alt="MIDEREC San Juan Shield" class="w-16 h-16 mb-4" data-alt="A minimalist institutional shield logo for MIDEREC San Juan, high contrast, clean vectors, dominican republic sports ministry aesthetic, navy and white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqDWgYVwsrNNhmyATUNAf67H1B-voITNfuaaI-xgDmgdkk4ZtvG0aUAmoN7_ZFBZLegCAznFTRxlvGObF6uC8pvB7p_hWH6Ai2ztP_fB0U3PmN2KNlR43__1eMwXmb9sOwT1anK9Y5U4egWM9oDC5emK8vbX5yn5ZNmP5DeczE7BY7J_x0OcDuGDYmYC9QD4xMLhNadTgobsbk0scTLFu3paYZvm76TtZkdK1KXeGWb4RWDcqKahXh43Wgi1tBuWTIZ6_U0TNyIDQ"/>
+<h1 class="font-headline-md text-headline-md font-black text-white">SAN JUAN</h1>
+<p class="font-label-md text-label-md text-tertiary-fixed-dim uppercase mt-1">MIDEREC Admin Portal</p>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex-1 flex flex-col gap-1 px-4 overflow-y-auto">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT text-on-secondary hover:bg-secondary hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Dashboard</span>
+</a>
+<!-- Provincial Hub -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT text-on-secondary hover:bg-secondary hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Provincial Hub</span>
+</a>
+<!-- Athlete Registry -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT text-on-secondary hover:bg-secondary hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Athlete Registry</span>
+</a>
+<!-- Facility Management (ACTIVE) -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT bg-secondary-fixed-variant text-white border-l-4 border-primary font-bold transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stadium</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Facility Management</span>
+</a>
+<!-- Activity Logs -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT text-on-secondary hover:bg-secondary hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">history_edu</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Activity Logs</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-3 p-3 rounded-DEFAULT text-on-secondary hover:bg-secondary hover:text-white transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-[14px]">Reports</span>
+</a>
+</nav>
+<!-- CTA & Footer -->
+<div class="p-6 mt-auto border-t border-secondary/20">
+<button class="w-full bg-primary text-white font-label-lg text-label-lg uppercase py-3 rounded-DEFAULT hover:bg-surface-tint transition-colors mb-6 shadow-[0_4px_14px_0_rgba(185,0,20,0.39)]">
+                New Entry
+            </button>
+<div class="flex justify-around">
+<button class="text-tertiary-fixed-dim hover:text-white flex flex-col items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-label-md text-[10px] uppercase">Settings</span>
+</button>
+<button class="text-tertiary-fixed-dim hover:text-white flex flex-col items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">help</span>
+<span class="font-label-md text-[10px] uppercase">Support</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-container-margin pt-8 pb-12 gradient-subtle min-h-[calc(100vh-4rem)]">
+<!-- Page Header -->
+<header class="flex justify-between items-end mb-section-gap">
+<div class="flex items-center gap-4">
+<div class="w-1 h-10 bg-primary rounded-full"></div>
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background uppercase">Facility Management</h2>
+<p class="font-body-md text-body-md text-secondary mt-1">Overview and status of San Juan sports infrastructure.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="border-2 border-secondary text-secondary font-label-lg text-label-lg uppercase px-6 py-2.5 rounded-DEFAULT hover:bg-secondary hover:text-white transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">filter_list</span>
+                    Filter
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Hero Metric Card (Spans 8 cols) -->
+<div class="col-span-12 lg:col-span-8 bento-card rounded-xl p-6 relative overflow-hidden group">
+<!-- Background Image Decor -->
+<div class="absolute inset-0 z-0 opacity-10 mix-blend-multiply group-hover:opacity-20 transition-opacity duration-500" data-alt="A dramatic wide shot of a modern athletics track at dusk, empty stadium, dramatic lighting, dominican republic institutional architecture, deep blue and red tones." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD8YFuszBawVcv375pPeqbt_Odt_dH3Iozeme6p5hrlE3Y6AJp_4w_pzO9QDOFuxOaIxuDVyEY8xmKSSuIsjsx80-VCciEkmEHV_eCn18AWdjjKuS6DPpiPjx9trqNgUSK2AKqjIO7blsc20o-uJoH60OEvlzRI5TPXbg8IeCRGyoxlXWUURE9HsAEWUyxQkBtsOLJ29vF3zeeNZeLqSdpUn8KGkVFOdDEPbZhYMvRRbzUsmgFhorz1e2QgnTFMUT9j2nB4PdYoKEg')"></div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm uppercase text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined">analytics</span> Overall Condition
+                            </h3>
+</div>
+<span class="bg-primary text-white font-label-md px-3 py-1 rounded-DEFAULT uppercase">Live Data</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mt-auto">
+<div class="bg-surface/80 backdrop-blur p-4 rounded-lg border border-outline-variant">
+<p class="font-label-md text-secondary uppercase mb-1">Operational</p>
+<p class="font-display-lg text-display-lg text-on-surface">24</p>
+</div>
+<div class="bg-surface/80 backdrop-blur p-4 rounded-lg border border-outline-variant">
+<p class="font-label-md text-secondary uppercase mb-1">Maintenance</p>
+<p class="font-display-lg text-display-lg text-primary">8</p>
+</div>
+<div class="bg-surface/80 backdrop-blur p-4 rounded-lg border border-outline-variant">
+<p class="font-label-md text-secondary uppercase mb-1">Under Construction</p>
+<p class="font-display-lg text-display-lg text-secondary">3</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action / Status (Spans 4 cols) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<div class="bento-card rounded-xl p-6 flex-1 flex flex-col justify-center border-t-[3px] border-t-primary">
+<h3 class="font-headline-sm text-headline-sm uppercase text-on-surface mb-2">Urgent Inspections</h3>
+<p class="font-body-md text-tertiary mb-4">2 facilities require immediate attention.</p>
+<button class="w-full bg-surface-container-high border border-outline-variant text-primary font-label-lg uppercase py-3 rounded-DEFAULT hover:bg-primary-fixed transition-colors flex justify-center items-center gap-2">
+                        View Reports <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="bento-card rounded-xl p-6 flex-1 bg-on-secondary-fixed text-white border-none">
+<h3 class="font-headline-sm text-headline-sm uppercase mb-2 text-primary-fixed">Next Tournament</h3>
+<p class="font-body-lg font-bold mb-1">Juegos Provinciales 2024</p>
+<p class="font-label-md text-secondary-fixed-dim uppercase">In 45 Days</p>
+</div>
+</div>
+<!-- Nested Data Grid (Screen 2 functionality placeholder) -->
+<div class="col-span-12 mt-section-gap">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-1 h-6 bg-primary rounded-full"></div>
+<h3 class="font-headline-md text-headline-md uppercase text-on-surface">Facility Directory</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Facility Card 1 -->
+<div class="bento-card rounded-xl overflow-hidden hover:bento-card-active transition-all cursor-pointer group">
+<div class="h-32 bg-secondary/10 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Close up of a polished wooden basketball court floor, bright gymnasium lighting, institutional sports facility, clean lines, dominican republic context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCSlBrXq_HFeI5gczP4J7ujEhLjhkyBDPa8doYIF-SGgMBo6gu1IRQUuQVhFaD1A5fPTd_htn3TYPvME04PE94hXMPSVkNyPK5hPxRikjmghZddP2KwzhpLlohOD-kqQKyourFZRjrrAZPCbYeS5gbcTjVZjZbckA4pofB7O2q0Fkzo5K-HccsQkzDvziajTz3XqtAWVL9lLtLgPWe-OGvqBjQ1er1XbfJ8VZsiKO9KfwP9mOgBhI5Rp2-TlsQRv0pFZhCJCmm685s')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-secondary-fixed to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<span class="bg-secondary text-white font-label-md px-2 py-0.5 rounded text-[10px] uppercase">Basketball</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-sm text-headline-sm uppercase mb-1">Pabellón de Baloncesto</h4>
+<p class="font-body-md text-tertiary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Complejo Deportivo San Juan
+                            </p>
+<div class="flex justify-between items-center pt-3 border-t border-outline-variant">
+<span class="font-label-md text-primary uppercase">Needs Maint.</span>
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+</div>
+</div>
+</div>
+<!-- Facility Card 2 -->
+<div class="bento-card rounded-xl overflow-hidden hover:bento-card-active transition-all cursor-pointer group border-t-[3px] border-t-primary">
+<div class="h-32 bg-secondary/10 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A green baseball field diamond viewed from behind home plate, sunny day, well maintained grass, institutional sports facility, dominican republic context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCOeX_LOOK4-JXR3DeqX_AzAtPlVylA0S4MKkRIQHXlxIu_4eazLtjsSwot-HHL5f7u2i9ZEQtzmdlcFTPcMAFdfXW1Lxp1lrQ-t-J4XlEEcXOVteeHPSkRUiJGvvY0vPTzmqdwmljOv-zjVrwh1XL3HUp2v2TT-khxK7TKMryUPGgkLRpfREuEj23_buSmoKNc7-TL0AZoFSGoPttH0Z0dGq4k1szP381ryHPSxyDg8zJ8cip1zZe1_DBQYprgy1oVl5_cp_wQ9sU')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-secondary-fixed to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<span class="bg-secondary text-white font-label-md px-2 py-0.5 rounded text-[10px] uppercase">Baseball</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-sm text-headline-sm uppercase mb-1">Estadio Hermanos Suárez</h4>
+<p class="font-body-md text-tertiary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Villa Felicia
+                            </p>
+<div class="flex justify-between items-center pt-3 border-t border-outline-variant">
+<span class="font-label-md text-secondary uppercase">Operational</span>
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+</div>
+</div>
+</div>
+<!-- Facility Card 3 -->
+<div class="bento-card rounded-xl overflow-hidden hover:bento-card-active transition-all cursor-pointer group">
+<div class="h-32 bg-secondary/10 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A blue synthetic athletics track curving around a green infield, bright daylight, institutional sports facility, pristine condition, dominican republic context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCy9F8XMFElYcOP__qkzODUGPTE7DoubjUu2CB5Njv9yfaqfqBiH9c_-OPPjh8DvfuqFMCtKDj3bPCna8el3cqZ-cbGQsgnO6vBAPcSwwb711CFYSE2ldGClWFydO_gjW71PKN6RE5jFdrmwhyiF8XUomQ7FMbInCXxOL6X8dzPfPOmH2325fXNoAkx5b1H6qj6Ar3FobXx_Ik-A6_LLq9ksFQM88Xj9wNyk4ZfBrQRmRFzWPKYDXGrRAFZDJ-w8xZV3gk7DQsEWsw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-secondary-fixed to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<span class="bg-secondary text-white font-label-md px-2 py-0.5 rounded text-[10px] uppercase">Athletics</span>
+</div>
+</div>
+<div class="p-5">
+<h4 class="font-headline-sm text-headline-sm uppercase mb-1">Pista de Atletismo</h4>
+<p class="font-body-md text-tertiary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Complejo Deportivo San Juan
+                            </p>
+<div class="flex justify-between items-center pt-3 border-t border-outline-variant">
+<span class="font-label-md text-secondary uppercase">Operational</span>
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

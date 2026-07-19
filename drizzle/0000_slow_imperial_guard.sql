@@ -1,0 +1,68 @@
+CREATE TABLE `activities` (
+	`id` text PRIMARY KEY NOT NULL,
+	`slug` text NOT NULL,
+	`title` text NOT NULL,
+	`sport` text NOT NULL,
+	`municipality` text NOT NULL,
+	`venue` text NOT NULL,
+	`summary` text NOT NULL,
+	`date_status` text NOT NULL,
+	`start_at` integer,
+	`end_at` integer,
+	`event_status` text NOT NULL,
+	`editorial_status` text NOT NULL,
+	`publish_at` integer,
+	`unpublish_at` integer,
+	`featured` integer DEFAULT false NOT NULL,
+	`image_url` text DEFAULT '' NOT NULL,
+	`video_url` text DEFAULT '' NOT NULL,
+	`registration_url` text DEFAULT '' NOT NULL,
+	`created_by` text NOT NULL,
+	`updated_by` text NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`version` integer DEFAULT 1 NOT NULL,
+	CONSTRAINT "activities_date_status_check" CHECK("activities"."date_status" in ('confirmed','tbd')),
+	CONSTRAINT "activities_event_status_check" CHECK("activities"."event_status" in ('scheduled','postponed','cancelled')),
+	CONSTRAINT "activities_editorial_status_check" CHECK("activities"."editorial_status" in ('draft','scheduled','published','archived')),
+	CONSTRAINT "activities_confirmed_date_check" CHECK("activities"."date_status" != 'confirmed' or "activities"."start_at" is not null),
+	CONSTRAINT "activities_end_check" CHECK("activities"."end_at" is null or ("activities"."start_at" is not null and "activities"."end_at" >= "activities"."start_at")),
+	CONSTRAINT "activities_scheduled_publish_check" CHECK("activities"."editorial_status" != 'scheduled' or "activities"."publish_at" is not null),
+	CONSTRAINT "activities_unpublish_check" CHECK("activities"."unpublish_at" is null or "activities"."publish_at" is null or "activities"."unpublish_at" > "activities"."publish_at"),
+	CONSTRAINT "activities_version_check" CHECK("activities"."version" >= 1)
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `activities_slug_unique` ON `activities` (`slug`);--> statement-breakpoint
+CREATE INDEX `activities_visibility_idx` ON `activities` (`editorial_status`,`publish_at`,`unpublish_at`);--> statement-breakpoint
+CREATE INDEX `activities_start_idx` ON `activities` (`start_at`);--> statement-breakpoint
+CREATE TABLE `activity_submissions` (
+	`id` text PRIMARY KEY NOT NULL,
+	`title` text NOT NULL,
+	`sport` text NOT NULL,
+	`municipality` text NOT NULL,
+	`venue` text NOT NULL,
+	`summary` text NOT NULL,
+	`date_status` text NOT NULL,
+	`start_at` integer,
+	`end_at` integer,
+	`image_url` text DEFAULT '' NOT NULL,
+	`video_url` text DEFAULT '' NOT NULL,
+	`registration_url` text DEFAULT '' NOT NULL,
+	`contact_name` text NOT NULL,
+	`contact_email` text NOT NULL,
+	`contact_phone` text DEFAULT '' NOT NULL,
+	`consent` integer NOT NULL,
+	`status` text DEFAULT 'pending' NOT NULL,
+	`admin_note` text DEFAULT '' NOT NULL,
+	`accepted_activity_id` text,
+	`reviewed_by` text,
+	`reviewed_at` integer,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`accepted_activity_id`) REFERENCES `activities`(`id`) ON UPDATE no action ON DELETE set null,
+	CONSTRAINT "activity_submissions_date_status_check" CHECK("activity_submissions"."date_status" in ('confirmed','tbd')),
+	CONSTRAINT "activity_submissions_status_check" CHECK("activity_submissions"."status" in ('pending','accepted','rejected')),
+	CONSTRAINT "activity_submissions_consent_check" CHECK("activity_submissions"."consent" = 1)
+);
+--> statement-breakpoint
+CREATE INDEX `activity_submissions_status_idx` ON `activity_submissions` (`status`,`created_at`);

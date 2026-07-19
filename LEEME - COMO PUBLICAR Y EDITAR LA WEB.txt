@@ -1,0 +1,254 @@
+================================================================================
+  MIDEREC SAN JUAN — PORTAL DEPORTIVO PROVINCIAL
+  Guía de instalación, publicación y personalización
+  Actualizada: 17 de julio de 2026
+================================================================================
+
+Esta carpeta contiene el código completo de la web "San Juan se mueve":
+el portal público de la Dirección Provincial San Juan del Ministerio de
+Deportes y Recreación, con su panel de administración protegido.
+
+--------------------------------------------------------------------------------
+1. QUÉ INCLUYE LA WEB
+--------------------------------------------------------------------------------
+- Portada pública con agenda deportiva en vivo, que se actualiza sola cada
+  60 segundos con las actividades aprobadas.
+- Escaparate del hero que destaca la próxima actividad (o la que está
+  ocurriendo ahora) con su foto, cuenta regresiva y etiqueta "EN VIVO".
+- Cinta de titulares en bucle infinito (se pausa al pasar el mouse).
+- Formulario público "Proponer actividad": cualquier persona envía una
+  propuesta que queda PENDIENTE hasta que un administrador la revise.
+- Panel de administración en /admin: aprobar propuestas, crear/editar/
+  publicar/archivar actividades, subir imágenes.
+- Sección de contacto (lienzo rojo) con el corredor animado.
+
+Tecnología: React + vinext (Next.js sobre Cloudflare Workers), base de
+datos Cloudflare D1 (SQLite), almacenamiento de imágenes Cloudflare R2.
+
+--------------------------------------------------------------------------------
+2. REQUISITOS
+--------------------------------------------------------------------------------
+- Node.js versión 22.13 o superior  →  https://nodejs.org
+- npm (viene incluido con Node).
+
+--------------------------------------------------------------------------------
+3. CÓMO EJECUTARLA EN TU COMPUTADORA (DESARROLLO)
+--------------------------------------------------------------------------------
+Abre una terminal DENTRO de esta carpeta y ejecuta:
+
+    npm install              (instala las dependencias; solo la primera vez)
+    npm run dev              (arranca la web en http://localhost:3000)
+
+IMPORTANTE — LA PRIMERA VEZ: la base de datos local nace vacía y la agenda
+dará error hasta crear las tablas. Con el servidor DETENIDO (Ctrl+C):
+
+    npm run db:migrate:local (crea las tablas en la base local)
+    npm run dev              (vuelve a arrancar)
+
+Otros comandos útiles:
+
+    npm run build            (compila la versión de producción)
+    npm test                 (compila y corre las pruebas automáticas)
+    npm run lint             (revisa la calidad del código)
+
+--------------------------------------------------------------------------------
+4. CÓMO ENTRAR AL PANEL DE ADMINISTRACIÓN
+--------------------------------------------------------------------------------
+1) Abre http://localhost:3000/admin (o tudominio.com/admin en producción).
+2) Solo pueden entrar los correos listados en la variable ADMIN_EMAILS.
+
+   - EN LOCAL: edita el archivo `.dev.vars` (está en esta carpeta):
+         ADMIN_EMAILS=correo1@gmail.com,correo2@gmail.com
+     (puedes poner varios correos separados por comas)
+
+   - EN PRODUCCIÓN: define ADMIN_EMAILS como variable/secreto del proyecto
+     en la plataforma donde publiques (ver sección 5).
+
+3) La identidad del usuario llega por la cabecera de autenticación de la
+   plataforma de hosting (oai-authenticated-user-email). En producción esa
+   es la ÚNICA forma de entrar al panel.
+
+   EN LOCAL, para poder entrar sin la plataforma, el archivo `.dev.vars`
+   incluye estas dos líneas (ya vienen puestas):
+         ADMIN_PASSWORD=TuContraseñaLocal
+         LOCAL_DEV_AUTH=1
+   Con eso, http://localhost:3000/admin te lleva a una pantalla de login
+   local. Escribe un correo de ADMIN_EMAILS y esa contraseña.
+
+   ⚠ SEGURIDAD — MUY IMPORTANTE:
+   · LOCAL_DEV_AUTH solo debe existir en `.dev.vars` (tu computadora).
+     NUNCA la definas en producción. Si no existe, el login local queda
+     totalmente deshabilitado y el panel exige la identidad real de la
+     plataforma; así nadie puede entrar falsificando datos.
+   · No hay contraseña por defecto en el código: sin ADMIN_PASSWORD el
+     login local no funciona (a propósito).
+
+Flujo editorial: Propuesta pública → Pendiente en /admin → el equipo la
+revisa y la convierte en actividad → al marcarla "Publicada" (o programar
+su fecha de publicación) aparece en la web al instante.
+
+Acciones rápidas disponibles en cada actividad del panel:
+  · Editar               abre el editor completo (fechas, imagen, enlaces)
+  · Publicar ahora /     alterna entre visible en el sitio y borrador
+    Ocultar del sitio    con un solo clic
+  · Destacar en portada  la actividad protagoniza el escaparate del hero
+  · Duplicar             crea una copia como borrador (ideal para eventos
+                         que se repiten cada semana o cada año)
+  · Posponer / Cancelar  cambia el estado del evento sin despublicarlo
+  · Archivar             la retira del sitio conservando el historial
+  · Eliminar definitivamente  borra para siempre (solo actividades ya
+                         archivadas: es un candado de seguridad en dos pasos)
+  · Exportar CSV         descarga la lista filtrada como hoja de cálculo
+                         (se abre en Excel) para informes al ministerio
+
+--------------------------------------------------------------------------------
+5. CÓMO PUBLICARLA EN INTERNET
+--------------------------------------------------------------------------------
+El proyecto está preparado para el hosting de sitios del workspace de
+ChatGPT/OpenAI (el archivo `.openai/hosting.json` ya declara los enlaces
+DB y MEDIA, y contiene el project_id del sitio):
+
+  OPCIÓN A — Plataforma del workspace (recomendada, es donde nació el sitio)
+  1) Sube/sincroniza esta carpeta en el proyecto del workspace.
+  2) La plataforma crea automáticamente la base D1 (DB), el bucket R2
+     (MEDIA) y aplica las migraciones de la carpeta `drizzle/` al publicar.
+  3) Configura la variable ADMIN_EMAILS en los ajustes/secretos del
+     proyecto con los correos de los administradores.
+     NO definas LOCAL_DEV_AUTH ni ADMIN_PASSWORD en producción: solo sirven
+     para el desarrollo local y activarlas debilitaría la seguridad.
+  4) Publica. La autenticación del /admin funciona sola porque la
+     plataforma añade la cabecera con el correo del usuario que navega.
+
+  OPCIÓN B — Cloudflare propio (avanzado)
+  El código corre sobre Cloudflare Workers, así que puede desplegarse en
+  una cuenta propia de Cloudflare, pero requiere trabajo técnico extra:
+  1) Crear un `wrangler.jsonc` con: main worker/index.ts, un binding D1
+     llamado DB, un binding R2 llamado MEDIA, assets y nodejs_compat.
+  2) Crear la base:  npx wrangler d1 create miderec-san-juan
+     y aplicar la migración:
+     npx wrangler d1 execute miderec-san-juan --remote --file drizzle/0000_slow_imperial_guard.sql
+  3) Definir el secreto:  npx wrangler secret put ADMIN_EMAILS
+  4) MUY IMPORTANTE: fuera de la plataforma del workspace NO existe la
+     cabecera de autenticación. Hay que proteger /admin de otra forma
+     (por ejemplo Cloudflare Access) y adaptar `app/chatgpt-auth.ts`
+     para leer la identidad desde esa protección.
+
+--------------------------------------------------------------------------------
+6. CÓMO CAMBIAR LOS TEXTOS Y DATOS DE LA WEB (LO MÁS FRECUENTE)
+--------------------------------------------------------------------------------
+Todos los archivos se editan con cualquier editor de texto (recomendado:
+Visual Studio Code). Tras guardar, la web se actualiza sola en desarrollo.
+
+▶ USUARIO DE INSTAGRAM / FACEBOOK QUE SE MUESTRA
+  Archivo: app/public-home.tsx
+  Busca:   suggestedHandle="@MIDERECSanJuan"
+  Cambia el texto entre comillas. Se actualiza en toda la web
+  (tarjetas de Facebook e Instagram de la sección Redes).
+
+▶ ENLACES A LAS CUENTAS NACIONALES DE MIDEREC
+  Archivo: app/public-view.tsx  → busca "national-socials"
+  Ahí están las URLs de Facebook e Instagram nacionales.
+
+▶ TELÉFONO, CORREO, WHATSAPP Y NOMBRE DEL DIRECTOR (sección Contacto)
+  Archivo: app/public-view.tsx  → busca "verified-contact"
+  Cambia el nombre, el tel:+18092847909, el enlace wa.me/18092847909
+  (WhatsApp) y el mailto:.
+
+▶ ETIQUETA "PLATAFORMA DEPORTIVA PROVISIONAL" (arriba del título del hero)
+  Archivo: app/public-view.tsx  → busca "Plataforma deportiva provisional"
+  Cuando la plataforma sea oficial, cambia "provisional" por "oficial".
+
+▶ LEMA PRINCIPAL "SAN JUAN SE MUEVE" (título gigante del hero)
+  Archivo: app/public-view.tsx  → busca "hero-outline"
+  Son dos líneas: <span className="hero-outline">San Juan</span> y
+  <span>se mueve</span>.
+
+▶ PALABRAS DE LA CINTA ROJA SUPERIOR
+  Archivo: app/public-view.tsx  → busca "signalWords"
+  Es una lista: agrega, quita o cambia palabras entre comillas.
+
+▶ TEXTOS DE LA CINTA GIGANTE DEL LEMA (antes del lienzo rojo)
+  Archivo: app/public-view.tsx  → busca "MottoMarquee"
+
+▶ FRASE DEL PIE DE PÁGINA ("El Granero del Sur también juega.")
+  Archivo: app/public-view.tsx  → busca "Granero"
+
+▶ TÍTULO Y DESCRIPCIÓN PARA GOOGLE Y REDES (SEO / al compartir el enlace)
+  Archivo: app/layout.tsx  → función generateMetadata
+  (title, description, openGraph…)
+
+▶ FOTO GRANDE DEL HERO (cuando no hay actividad con foto)
+  Archivo: public/hero-deporte.webp
+  Reemplaza el archivo por otra imagen vertical (ideal 3:4, ej. 1536x2048)
+  manteniendo el mismo nombre. Formato .webp recomendado (pesa poco).
+
+▶ LOGO
+  Archivo: public/miderec-logo.svg   (mismo nombre para no tocar código)
+
+▶ IMAGEN AL COMPARTIR EN REDES (Open Graph)
+  Archivo: public/og-v3.png  (referenciada en app/layout.tsx)
+
+▶ COLORES DE LA MARCA
+  Archivo: app/globals.css  → busca ".public-site {"
+  Variables: --signal-navy (azul marino), --signal-blue (azul),
+  --signal-red (rojo), --signal-sky (celeste)…
+
+▶ VELOCIDAD DE LAS ANIMACIONES
+  Archivo: app/globals.css
+  - Cinta superior:      "ticker-loop 36s"   (más segundos = más lenta)
+  - Cinta del lema:      "ticker-loop 30s ... reverse" (en .motto-track)
+  - Corredor del lienzo: "runner-cross 13s"
+
+▶ CORREOS DE ADMINISTRADORES
+  Local: archivo .dev.vars  |  Producción: variable ADMIN_EMAILS
+
+▶ DATOS PARA BUSCADORES (SEO estructurado, JSON-LD)
+  Archivo: app/layout.tsx  → busca "structuredData"
+  (nombre de la organización, teléfono y correo de contacto oficiales)
+
+▶ ROBOTS Y APLICACIÓN INSTALABLE
+  public/robots.txt            los buscadores no indexan /admin ni /api
+  public/manifest.webmanifest  nombre e icono al "instalar" la web en el
+                               teléfono (Añadir a pantalla de inicio)
+
+--------------------------------------------------------------------------------
+7. ESTRUCTURA DE CARPETAS (RESUMEN)
+--------------------------------------------------------------------------------
+  app/                  Páginas y componentes (la web en sí)
+    page.tsx            Portada (servidor)
+    public-home.tsx     Lógica pública: agenda, formulario de propuestas
+    public-view.tsx     Diseño de la portada (hero, secciones, pie)
+    globals.css         Todos los estilos (con índice comentado arriba)
+    layout.tsx          Metadatos SEO, fuentes
+    admin/              Panel de administración
+    api/                Rutas de datos (actividades, propuestas, media)
+  db/                   Acceso a la base de datos (D1 + Drizzle)
+  drizzle/              Migraciones SQL de la base de datos
+  lib/                  Validación y autorización
+  public/               Imágenes y archivos estáticos
+  scripts/              migrate-local.mjs (prepara la base local)
+  tests/                Pruebas automáticas (npm test)
+  worker/               Punto de entrada de Cloudflare Workers
+  .dev.vars             Variables locales (ADMIN_EMAILS)
+  .openai/hosting.json  Enlaces de hosting (DB = D1, MEDIA = R2)
+
+--------------------------------------------------------------------------------
+8. PROBLEMAS FRECUENTES
+--------------------------------------------------------------------------------
+- "La agenda no carga / error 500 en /api/activities" (en local):
+  faltan las tablas → detén el servidor y ejecuta npm run db:migrate:local
+
+- "No puedo entrar a /admin": tu correo no está en ADMIN_EMAILS, o en
+  producción falta definir esa variable en la plataforma.
+
+- "Las animaciones no se mueven": Windows > Configuración > Accesibilidad >
+  Efectos visuales > "Efectos de animación" desactivado. Las cintas y el
+  corredor siguen moviéndose igualmente (están exentos), pero el resto de
+  animaciones respeta esa preferencia del visitante, como debe ser.
+
+- Cambié algo y quiero deshacerlo: el proyecto original en
+  Desktop\miderec-san-juan tiene el historial de Git (git log / git diff).
+
+================================================================================
+  Hecho con #SanJuanSeMueve — El deporte nos une.
+================================================================================

@@ -1,0 +1,18 @@
+{
+  "name": "MIDEREC San Juan — San Juan se mueve",
+  "short_name": "MIDEREC SJ",
+  "description": "Agenda, oportunidades e historias del deporte de la provincia San Juan.",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03132f",
+  "theme_color": "#ec2530",
+  "icons": [
+    {
+      "src": "/miderec-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
