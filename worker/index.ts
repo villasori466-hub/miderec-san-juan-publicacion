@@ -37,12 +37,6 @@ function secureResponse(request: Request, response: Response): Response {
     headers.set("Cache-Control", "no-store, max-age=0");
     headers.set("Pragma", "no-cache");
   }
-  if (response.ok && pathname.startsWith("/models/")) {
-    headers.set("Cache-Control", "public, max-age=604800, stale-while-revalidate=86400");
-    headers.set("Content-Type", "model/gltf-binary");
-    headers.set("Cross-Origin-Resource-Policy", "same-origin");
-  }
-
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
