@@ -102,32 +102,48 @@ export async function verifyManualCredentials(username: string, password: string
   const configuredUsername = configuredManualUsername();
   const storedHash = config.ADMIN_MANUAL_PASSWORD_HASH?.trim() ?? "";
   const parts = storedHash.split("$");
-  if (parts.length !== 4 || parts[0] !== "pbkdf2-sha256") return false;
+  const secret = config.ADMIN_SESSION_SECRET?.trim() ?? "";
+  let passwordMatches = false;
 
-  const iterations = Number(parts[1]);
-  const salt = decodeBytes(parts[2] ?? "");
-  const expected = decodeBytes(parts[3] ?? "");
-  if (!Number.isInteger(iterations) || iterations < 210_000 || iterations > 1_000_000 || !salt || salt.length < 16 || !expected || expected.length !== 32) {
-    return false;
+  if (parts.length === 3 && parts[0] === "hmac-sha256") {
+    const salt = parts[1] ?? "";
+    const expected = decodeBytes(parts[2] ?? "");
+    if (salt.length >= 22 && expected?.length === 32 && secret.length >= 32) {
+      const derived = await sign(`password:${salt}:${password}`, secret);
+      passwordMatches = constantTimeEqual(derived, expected);
+    }
+  } else if (parts.length === 4 && parts[0] === "pbkdf2-sha256") {
+    const iterations = Number(parts[1]);
+    const salt = decodeBytes(parts[2] ?? "");
+    const expected = decodeBytes(parts[3] ?? "");
+    if (
+      Number.isInteger(iterations) &&
+      iterations >= 210_000 &&
+      iterations <= 1_000_000 &&
+      salt &&
+      salt.length >= 16 &&
+      expected?.length === 32
+    ) {
+      const material = await crypto.subtle.importKey(
+        "raw",
+        new TextEncoder().encode(password),
+        "PBKDF2",
+        false,
+        ["deriveBits"],
+      );
+      const derived = new Uint8Array(
+        await crypto.subtle.deriveBits(
+          { name: "PBKDF2", hash: "SHA-256", salt, iterations },
+          material,
+          256,
+        ),
+      );
+      passwordMatches = constantTimeEqual(derived, expected);
+    }
   }
 
-  const material = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"],
-  );
-  const derived = new Uint8Array(
-    await crypto.subtle.deriveBits(
-      { name: "PBKDF2", hash: "SHA-256", salt, iterations },
-      material,
-      256,
-    ),
-  );
-
   const usernameMatches = constantTimeTextEqual(username.trim().toLowerCase(), configuredUsername);
-  return usernameMatches && constantTimeEqual(derived, expected);
+  return usernameMatches && passwordMatches;
 }
 
 export async function createManualSessionToken(username: string): Promise<string> {
