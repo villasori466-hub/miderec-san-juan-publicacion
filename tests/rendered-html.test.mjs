@@ -23,18 +23,49 @@ test("the public site is data-driven and contains no demo events", async () => {
 });
 
 test("admin routes enforce server authorization before data access", async () => {
-  const [adminPage, adminAuth, activitiesApi, mediaApi] = await Promise.all([
+  const [
+    adminPage,
+    manualLogin,
+    adminAuth,
+    manualAuth,
+    sessionApi,
+    rateLimit,
+    worker,
+    activitiesApi,
+    mediaApi,
+  ] = await Promise.all([
     readFile(new URL("../app/admin/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/login/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../lib/admin-auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/manual-admin-auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/session/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/admin-login-rate-limit.ts", import.meta.url), "utf8"),
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/activities/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/media/route.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(adminPage, /requireAdminPage/);
+  assert.match(manualLogin, /\/api\/admin\/session/);
+  assert.match(manualLogin, /Continuar con ChatGPT/);
   assert.match(adminAuth, /ADMIN_EMAILS/);
-  assert.match(adminAuth, /requireChatGPTUser/);
+  assert.match(adminAuth, /getManualAdminUser/);
+  assert.match(adminAuth, /getChatGPTUser/);
   assert.match(adminAuth, /status: 401/);
   assert.match(adminAuth, /status: 403/);
+  assert.match(manualAuth, /PBKDF2/);
+  assert.match(manualAuth, /HMAC/);
+  assert.match(manualAuth, /MANUAL_SESSION_MAX_AGE = 60 \* 60 \* 8/);
+  assert.match(manualAuth, /httpOnly|MANUAL_ADMIN_COOKIE/);
+  assert.match(sessionApi, /sameOriginError/);
+  assert.match(sessionApi, /sameSite: "strict"/);
+  assert.match(sessionApi, /secure:/);
+  assert.match(sessionApi, /priority: "high"/);
+  assert.match(rateLimit, /maximumFailures: 5/);
+  assert.match(rateLimit, /admin_login_attempts/);
+  assert.match(worker, /X-Frame-Options/);
+  assert.match(worker, /Content-Security-Policy/);
+  assert.match(worker, /Cache-Control/);
   assert.match(
     activitiesApi,
     /export async function GET[\s\S]*?await requireAdminApi\(\)[\s\S]*?listAdminActivities\(\)/,
@@ -76,6 +107,7 @@ test("wires persistence, automation, submissions, media, and metadata", async ()
     access(new URL("../public/miderec-logo.svg", import.meta.url)),
     access(new URL("../public/og-v4.jpg", import.meta.url)),
     access(new URL("../drizzle/0000_slow_imperial_guard.sql", import.meta.url)),
+    access(new URL("../drizzle/0001_parched_alice.sql", import.meta.url)),
     access(new URL("../app/api/admin/media/route.ts", import.meta.url)),
     access(new URL("../app/media/[...key]/route.ts", import.meta.url)),
   ]);
@@ -104,6 +136,7 @@ test("ships the remastered discovery, saved agenda, calendar, and accessible pro
   assert.match(publicView, /requestAnimationFrame/);
   assert.match(publicView, /image-preview/);
   assert.doesNotMatch(publicView, /section-index|SportOrbit|hero-summary/);
+  assert.doesNotMatch(publicView, /Radar provincial|hero-radar/);
   assert.match(styles, /\.agenda-controls/);
   assert.match(styles, /\.locality-section/);
   assert.match(styles, /\.activity-sphere/);
@@ -114,6 +147,7 @@ test("ships the remastered discovery, saved agenda, calendar, and accessible pro
   assert.match(publicHome, /latestActivities/);
   assert.match(publicHome, /\.slice\(0, 3\)/);
   assert.doesNotMatch(styles, /\.section-index|\.sport-orbit|\.hero-summary/);
+  assert.doesNotMatch(styles, /\.hero-radar|radar-scan/);
   assert.match(publicHome, /aria-busy=/);
   assert.match(publicHome, /Proceso de publicación/);
   assert.match(publicHome, /maxLength=\{3000\}/);

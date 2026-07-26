@@ -2059,6 +2059,65 @@
 .loginSubmit:hover span { transform: translateX(4px); }
 .loginSubmit:active { transform: translateY(0) scale(.985); }
 
+.authDivider {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  margin: 22px 0;
+  color: #7386a9;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.authDivider::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.authDivider span {
+  position: relative;
+  padding: 0 12px;
+  background: #0e2243;
+}
+
+.accessCard .chatGPTLogin {
+  min-height: 50px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(122, 215, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(122, 215, 255, 0.08);
+  color: #e8f6ff;
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.accessCard .chatGPTLogin:hover {
+  border-color: #7ad7ff;
+  background: rgba(122, 215, 255, 0.14);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.accessCard .securityNote {
+  margin: 17px 0 0;
+  padding: 11px 13px;
+  border-left: 3px solid #4bd29a;
+  border-radius: 6px;
+  background: rgba(75, 210, 154, 0.08);
+  color: #a9d9c5;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .loginBack {
   margin-top: 24px;
   padding-top: 18px;

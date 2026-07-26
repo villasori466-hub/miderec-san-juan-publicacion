@@ -69,3 +69,14 @@ export const activitySubmissions = sqliteTable("activity_submissions", {
   check("activity_submissions_status_check", sql`${table.status} in ('pending','accepted','rejected')`),
   check("activity_submissions_consent_check", sql`${table.consent} = 1`),
 ]);
+
+export const adminLoginAttempts = sqliteTable("admin_login_attempts", {
+  bucketKey: text("bucket_key").primaryKey(),
+  failedCount: integer("failed_count").notNull().default(0),
+  windowStartedAt: integer("window_started_at").notNull(),
+  lockedUntil: integer("locked_until").notNull().default(0),
+  updatedAt: integer("updated_at").notNull().default(sql`(unixepoch())`),
+}, (table) => [
+  index("admin_login_attempts_updated_idx").on(table.updatedAt),
+  check("admin_login_attempts_failed_count_check", sql`${table.failedCount} >= 0`),
+]);

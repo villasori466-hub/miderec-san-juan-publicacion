@@ -1,5 +1,7 @@
 import { env } from "cloudflare:workers";
-import { getChatGPTUser, requireChatGPTUser, type ChatGPTUser } from "@/app/chatgpt-auth";
+import { redirect } from "next/navigation";
+import { getChatGPTUser, safeRelativeReturnPath, type ChatGPTUser } from "@/app/chatgpt-auth";
+import { getManualAdminUser } from "@/lib/manual-admin-auth";
 
 type AdminResult = { ok: true; user: ChatGPTUser } | { ok: false; response: Response };
 
@@ -9,11 +11,24 @@ function allowedAdminEmails() {
 }
 
 export async function requireAdminPage(returnTo: string): Promise<ChatGPTUser | null> {
-  const user = await requireChatGPTUser(returnTo);
-  return allowedAdminEmails().has(user.email.trim().toLowerCase()) ? user : null;
+  const manualUser = await getManualAdminUser();
+  if (manualUser) return manualUser;
+
+  const chatGPTUser = await getChatGPTUser();
+  if (chatGPTUser) {
+    return allowedAdminEmails().has(chatGPTUser.email.trim().toLowerCase())
+      ? chatGPTUser
+      : null;
+  }
+
+  const safeReturnTo = safeRelativeReturnPath(returnTo);
+  redirect(`/admin/login?return_to=${encodeURIComponent(safeReturnTo)}`);
 }
 
 export async function requireAdminApi(): Promise<AdminResult> {
+  const manualUser = await getManualAdminUser();
+  if (manualUser) return { ok: true, user: manualUser };
+
   const user = await getChatGPTUser();
   if (!user) return { ok: false, response: Response.json({ error: "Authentication required" }, { status: 401 }) };
   if (!allowedAdminEmails().has(user.email.trim().toLowerCase())) {

@@ -658,22 +658,6 @@ export default function PublicView({
                   Proponer una actividad
                 </button>
               </div>
-              <button
-                className="hero-radar"
-                type="button"
-                onClick={(event) => scrollToIndex(event, "agenda")}
-              >
-                <span className="radar-pulse" aria-hidden="true"><i /><i /><b /></span>
-                <span>
-                  <small>Radar provincial</small>
-                  <strong>
-                    {agendaActivities.length
-                      ? `${agendaActivities.length} actividades listas para explorar`
-                      : "Agenda abierta a toda la provincia"}
-                  </strong>
-                </span>
-                <b aria-hidden="true">Explorar señal →</b>
-              </button>
             </div>
 
             <div className="hero-visual" data-reveal>

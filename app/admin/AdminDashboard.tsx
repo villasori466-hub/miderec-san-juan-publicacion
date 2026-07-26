@@ -945,7 +945,7 @@ export default function AdminDashboard({
               <small>{user.email}</small>
             </div>
           </div>
-          <a className={styles.signOut} href="/signout-with-chatgpt?return_to=%2F">
+          <a className={styles.signOut} href="/admin/logout?return_to=%2F">
             Cerrar sesión
           </a>
         </div>
