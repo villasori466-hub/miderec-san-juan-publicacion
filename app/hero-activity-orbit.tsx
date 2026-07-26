@@ -88,6 +88,37 @@ function WebGLFallback({ unavailable = false }: { unavailable?: boolean }) {
   );
 }
 
+function OrbitActivityImage({
+  activity,
+  detailed = false,
+}: {
+  activity: PublicActivity;
+  detailed?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (activity.imageUrl && !failed) {
+    return (
+      <img
+        src={activity.imageUrl}
+        alt={detailed ? `Imagen de ${activity.title}` : ""}
+        loading={detailed ? "eager" : "lazy"}
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <span
+      className={detailed ? "orbit-detail-image-fallback" : "orbit-image-fallback"}
+      aria-hidden="true"
+    >
+      {activity.sport.slice(0, 2).toLocaleUpperCase("es")}
+    </span>
+  );
+}
+
 export default function HeroActivityOrbit({
   activities,
   onOpenActivity,
@@ -105,7 +136,8 @@ export default function HeroActivityOrbit({
     baseY: number;
     horizontal: boolean;
   } | null>(null);
-  const orbitRef = useRef({ angle: -1.28, lastTime: 0 });
+  const orbitRef = useRef({ angle: 1.18, lastTime: 0 });
+  const orbitPausedRef = useRef(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -172,7 +204,7 @@ export default function HeroActivityOrbit({
         ? Math.min(time - orbitRef.current.lastTime, 64)
         : 0;
       orbitRef.current.lastTime = time;
-      if (!selected && pageVisible && !reducedMotion) {
+      if (!selected && !orbitPausedRef.current && pageVisible && !reducedMotion) {
         orbitRef.current.angle += elapsed * 0.000045;
       }
 
@@ -374,16 +406,22 @@ export default function HeroActivityOrbit({
                   type="button"
                   aria-haspopup="dialog"
                   aria-label={`Expandir actividad ${index + 1}: ${activity.title}`}
+                  onBlur={() => {
+                    orbitPausedRef.current = false;
+                  }}
                   onClick={(event) => selectActivity(activity, event.currentTarget)}
+                  onFocus={() => {
+                    orbitPausedRef.current = true;
+                  }}
+                  onPointerEnter={() => {
+                    orbitPausedRef.current = true;
+                  }}
+                  onPointerLeave={() => {
+                    orbitPausedRef.current = false;
+                  }}
                 >
                   <span className="orbit-number">{String(index + 1).padStart(2, "0")}</span>
-                  {activity.imageUrl ? (
-                    <img src={activity.imageUrl} alt="" loading="lazy" decoding="async" />
-                  ) : (
-                    <span className="orbit-image-fallback" aria-hidden="true">
-                      {activity.sport.slice(0, 2).toLocaleUpperCase("es")}
-                    </span>
-                  )}
+                  <OrbitActivityImage activity={activity} />
                   <span className="orbit-card-copy">
                     <strong>{activity.title}</strong>
                     <small>{activity.municipality || activity.sport}</small>
@@ -424,13 +462,7 @@ export default function HeroActivityOrbit({
                 ×
               </button>
               <div className="orbit-detail-media">
-                {selected.imageUrl ? (
-                  <img src={selected.imageUrl} alt={`Imagen de ${selected.title}`} />
-                ) : (
-                  <span aria-hidden="true">
-                    {selected.sport.slice(0, 2).toLocaleUpperCase("es")}
-                  </span>
-                )}
+                <OrbitActivityImage activity={selected} detailed />
                 <span className="orbit-detail-index">
                   {String(orbitActivities.findIndex((item) => item.id === selected.id) + 1).padStart(
                     2,
