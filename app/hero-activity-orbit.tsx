@@ -205,7 +205,7 @@ export default function HeroActivityOrbit({
         : 0;
       orbitRef.current.lastTime = time;
       if (!selected && !orbitPausedRef.current && pageVisible) {
-        orbitRef.current.angle += elapsed * (reducedMotion ? 0.000012 : 0.000105);
+        orbitRef.current.angle += elapsed * (reducedMotion ? 0.000052 : 0.000105);
       }
 
       const mobile = root.clientWidth < 560;

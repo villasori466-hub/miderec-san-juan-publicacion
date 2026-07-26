@@ -49,7 +49,7 @@ function BasketballModel({
     const delta = Math.min(rawDelta, 0.05);
 
     if (!interacting.current) {
-      automaticYaw.current += delta * (reducedMotion ? 0.045 : 0.34);
+      automaticYaw.current += delta * (reducedMotion ? 0.13 : 0.34);
     }
 
     renderedRotation.current.x = MathUtils.damp(
