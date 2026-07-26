@@ -232,9 +232,9 @@ export default function HeroActivityOrbit({
         card.style.setProperty("--orbit-opacity", opacity.toFixed(3));
         card.style.setProperty("--orbit-blur", depth < -0.35 ? "0.55px" : "0px");
         card.style.zIndex = selected?.id === orbitActivities[index]?.id
-          ? "14"
+          ? "22"
           : depth > 0
-            ? "10"
+            ? "20"
             : "3";
       });
 
