@@ -413,6 +413,11 @@ export default function HeroActivityOrbit({
                   onFocus={() => {
                     orbitPausedRef.current = true;
                   }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    selectActivity(activity, event.currentTarget);
+                  }}
                   onPointerEnter={() => {
                     orbitPausedRef.current = true;
                   }}
