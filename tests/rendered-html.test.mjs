@@ -113,11 +113,24 @@ test("wires persistence, automation, submissions, media, and metadata", async ()
   ]);
 });
 
-test("ships the remastered discovery, saved agenda, calendar, and accessible proposal flow", async () => {
-  const [publicView, publicHome, styles, adminDashboard, adminStyles, login] = await Promise.all([
+test("ships the remastered discovery, saved agenda, 3D hero, and accessible proposal flow", async () => {
+  const [
+    publicView,
+    publicHome,
+    heroOrbit,
+    basketballScene,
+    styles,
+    packageJson,
+    adminDashboard,
+    adminStyles,
+    login,
+  ] = await Promise.all([
     readFile(new URL("../app/public-view.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/public-home.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/hero-activity-orbit.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/basketball-scene.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/AdminDashboard.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/admin.module.css", import.meta.url), "utf8"),
     readFile(new URL("../app/local-login/page.tsx", import.meta.url), "utf8"),
@@ -129,25 +142,39 @@ test("ships the remastered discovery, saved agenda, calendar, and accessible pro
   assert.match(publicView, /activity-dialog/);
   assert.match(publicView, /IntersectionObserver/);
   assert.match(publicView, /aria-pressed=/);
-  assert.match(publicView, /ActivitySphere/);
-  assert.match(publicView, /sphere-latest/);
+  assert.match(publicView, /HeroActivityOrbit/);
+  assert.match(publicView, /hero-radar/);
+  assert.match(publicView, /Radar provincial/);
   assert.match(publicView, /scrollToIndex/);
   assert.match(publicView, /scrollAnimationRef/);
   assert.match(publicView, /requestAnimationFrame/);
-  assert.match(publicView, /image-preview/);
   assert.doesNotMatch(publicView, /section-index|SportOrbit|hero-summary/);
-  assert.doesNotMatch(publicView, /Radar provincial|hero-radar/);
   assert.match(styles, /\.agenda-controls/);
   assert.match(styles, /\.locality-section/);
-  assert.match(styles, /\.activity-sphere/);
-  assert.match(styles, /\.sphere-photo-face/);
-  assert.match(styles, /@keyframes sphere-float/);
-  assert.match(styles, /@keyframes sphere-auto-turn/);
+  assert.match(styles, /\.hero-orbit/);
+  assert.match(styles, /\.basketball-canvas-frame/);
+  assert.match(styles, /\.orbit-activity/);
+  assert.match(styles, /\.orbit-detail/);
+  assert.match(styles, /\.hero-radar/);
+  assert.match(styles, /@keyframes radar-scan/);
   assert.match(styles, /@keyframes index-arrival/);
   assert.match(publicHome, /latestActivities/);
-  assert.match(publicHome, /\.slice\(0, 3\)/);
+  assert.match(publicHome, /\.slice\(0, 5\)/);
+  assert.match(heroOrbit, /dynamic\(\(\) => import\("\.\/basketball-scene"\)/);
+  assert.match(heroOrbit, /ssr: false/);
+  assert.match(heroOrbit, /requestIdleCallback/);
+  assert.match(heroOrbit, /visibilitychange/);
+  assert.match(heroOrbit, /prefers-reduced-motion/);
+  assert.match(heroOrbit, /aria-modal="true"/);
+  assert.match(heroOrbit, /TOCA UNA ACTIVIDAD PARA EXPANDIR/i);
+  assert.match(basketballScene, /useGLTF\("\/models\/balon-san-juan\.glb"/);
+  assert.match(basketballScene, /useFrame/);
+  assert.match(basketballScene, /dpr=\{\[1, 1\.5\]\}/);
+  assert.match(packageJson, /@react-three\/fiber/);
+  assert.match(packageJson, /@react-three\/drei/);
+  assert.match(packageJson, /"three"/);
   assert.doesNotMatch(styles, /\.section-index|\.sport-orbit|\.hero-summary/);
-  assert.doesNotMatch(styles, /\.hero-radar|radar-scan/);
+  assert.doesNotMatch(styles, /\.sphere-shell|\.sphere-photo-face/);
   assert.match(publicHome, /aria-busy=/);
   assert.match(publicHome, /Proceso de publicación/);
   assert.match(publicHome, /maxLength=\{3000\}/);
@@ -159,4 +186,6 @@ test("ships the remastered discovery, saved agenda, calendar, and accessible pro
   assert.match(adminStyles, /Remaster editorial 2026/);
   assert.match(login, /styles\.loginForm/);
   assert.doesNotMatch(login, /style=\{\{/);
+
+  await access(new URL("../public/models/balon-san-juan.glb", import.meta.url));
 });

@@ -5,12 +5,11 @@ import {
   useMemo,
   useRef,
   useState,
-  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
   type SyntheticEvent,
 } from "react";
 import type { PublicActivity } from "../lib/activity-types";
+import HeroActivityOrbit from "./hero-activity-orbit";
 
 const TIME_ZONE = "America/Santo_Domingo";
 const SAVED_KEY = "miderec-san-juan-saved-activities";
@@ -150,168 +149,6 @@ async function shareActivity(activity: PublicActivity) {
   return "Enlace copiado";
 }
 
-function ActivitySphere({
-  activity,
-  activities,
-  onOpenImage,
-}: {
-  activity: PublicActivity | null;
-  activities: PublicActivity[];
-  onOpenImage(src: string, alt: string, title: string): void;
-}) {
-  const rootRef = useRef<HTMLElement>(null);
-  const rotationRef = useRef({ x: -7, y: -16 });
-  const dragRef = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    baseX: number;
-    baseY: number;
-    moved: boolean;
-  } | null>(null);
-  const imageSrc = activity?.imageUrl || "/hero-deporte.webp";
-  const title = activity?.title || "La próxima actividad puede comenzar contigo.";
-
-  function applyRotation(x: number, y: number) {
-    const nextX = Math.max(-48, Math.min(48, x));
-    rotationRef.current = { x: nextX, y };
-    rootRef.current?.style.setProperty("--sphere-rx", `${nextX.toFixed(2)}deg`);
-    rootRef.current?.style.setProperty("--sphere-ry", `${y.toFixed(2)}deg`);
-  }
-
-  function openActivityImage(targetActivity: PublicActivity | null) {
-    const src = targetActivity?.imageUrl || "/hero-deporte.webp";
-    const imageTitle = targetActivity?.title || "San Juan se mueve.";
-    onOpenImage(
-      src,
-      targetActivity ? `Imagen de ${targetActivity.title}` : "Atleta en una pista deportiva",
-      imageTitle,
-    );
-  }
-
-  function openImage() {
-    openActivityImage(activity);
-  }
-
-  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      baseX: rotationRef.current.x,
-      baseY: rotationRef.current.y,
-      moved: false,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.currentTarget.classList.add("is-dragging");
-  }
-
-  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    const deltaX = event.clientX - drag.startX;
-    const deltaY = event.clientY - drag.startY;
-    if (Math.hypot(deltaX, deltaY) > 5) drag.moved = true;
-    applyRotation(drag.baseX - deltaY * 0.24, drag.baseY + deltaX * 0.3);
-  }
-
-  function finishPointer(event: ReactPointerEvent<HTMLDivElement>, activate: boolean) {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    event.currentTarget.classList.remove("is-dragging");
-    dragRef.current = null;
-    if (activate && !drag.moved) openImage();
-  }
-
-  function handleKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
-    const step = event.shiftKey ? 18 : 8;
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openImage();
-      return;
-    }
-    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
-    event.preventDefault();
-    const { x, y } = rotationRef.current;
-    if (event.key === "ArrowLeft") applyRotation(x, y - step);
-    if (event.key === "ArrowRight") applyRotation(x, y + step);
-    if (event.key === "ArrowUp") applyRotation(x - step, y);
-    if (event.key === "ArrowDown") applyRotation(x + step, y);
-  }
-
-  return (
-    <section className="activity-sphere" ref={rootRef} aria-label="Últimas publicaciones deportivas">
-      <div
-        className="sphere-stage"
-        role="button"
-        tabIndex={0}
-        aria-label={`Esfera 3D de la última publicación: ${title}. Arrastra para girar y pulsa para ampliar la imagen.`}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={(event) => finishPointer(event, true)}
-        onPointerCancel={(event) => finishPointer(event, false)}
-        onKeyDown={handleKeyDown}
-      >
-        <span className="sphere-axis sphere-axis-one" aria-hidden="true" />
-        <span className="sphere-axis sphere-axis-two" aria-hidden="true" />
-        <span className="sphere-shadow" aria-hidden="true" />
-        <div className="sphere-float">
-          <span className="sphere-shell" aria-hidden="true">
-            <i className="sphere-seam sphere-seam-one" />
-            <i className="sphere-seam sphere-seam-two" />
-            <i className="sphere-seam sphere-seam-three" />
-          </span>
-          <div className="sphere-auto">
-            <div className="sphere-object" aria-hidden="true">
-              <span className="sphere-photo-face">
-                <img src={imageSrc} alt="" draggable={false} onError={showImageFallback} />
-                <small>Última publicación</small>
-              </span>
-              <span className="sphere-back-face">
-                <b>SJ</b>
-                <small>San Juan se mueve</small>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      {activities.length > 0 && (
-        <ol className="sphere-latest">
-          {activities.slice(0, 3).map((latest, index) => (
-            <li key={latest.id}>
-              <button
-                type="button"
-                onClick={() => openActivityImage(latest)}
-                aria-label={`Ampliar publicación ${index + 1}: ${latest.title}`}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <img
-                  src={latest.imageUrl || "/hero-deporte.webp"}
-                  alt=""
-                  draggable={false}
-                  onError={showImageFallback}
-                />
-                <span>
-                  <strong>{latest.title}</strong>
-                  <small>{latest.municipality}</small>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      )}
-      <div className="sphere-copy">
-        <span>Gira sola · arrastra</span>
-        <strong>{title}</strong>
-        <small>Pulsa la esfera o una publicación para ampliar la imagen ↗</small>
-      </div>
-    </section>
-  );
-}
-
 function ActivityCard({
   activity,
   saved,
@@ -406,14 +243,8 @@ export default function PublicView({
   const [layout, setLayout] = useState<AgendaLayout>("grid");
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<PublicActivity | null>(null);
-  const [imagePreview, setImagePreview] = useState<{
-    src: string;
-    alt: string;
-    title: string;
-  } | null>(null);
   const [shareNotice, setShareNotice] = useState("");
   const detailCloseRef = useRef<HTMLButtonElement>(null);
-  const imagePreviewCloseRef = useRef<HTMLButtonElement>(null);
   const scrollAnimationRef = useRef(0);
 
   const municipalities = useMemo(
@@ -452,7 +283,11 @@ export default function PublicView({
   }, [agendaActivities, mode, municipality, query, savedIds, sport]);
 
   const featured = heroActivity ?? agendaActivities[0] ?? null;
-  const sphereActivity = latestActivities[0] ?? featured;
+  const orbitActivities = latestActivities.length
+    ? latestActivities
+    : featured
+      ? [featured]
+      : [];
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -490,17 +325,13 @@ export default function PublicView({
   }, [filteredActivities.length, selectedActivity]);
 
   useEffect(() => {
-    if (!selectedActivity && !imagePreview) return;
+    if (!selectedActivity) return;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.setTimeout(() => {
-      if (selectedActivity) detailCloseRef.current?.focus();
-      else imagePreviewCloseRef.current?.focus();
-    }, 0);
+    window.setTimeout(() => detailCloseRef.current?.focus(), 0);
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setSelectedActivity(null);
-        setImagePreview(null);
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -508,7 +339,7 @@ export default function PublicView({
       document.body.style.overflow = overflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [imagePreview, selectedActivity]);
+  }, [selectedActivity]);
 
   useEffect(
     () => () => window.cancelAnimationFrame(scrollAnimationRef.current),
@@ -658,13 +489,28 @@ export default function PublicView({
                   Proponer una actividad
                 </button>
               </div>
+              <button
+                className="hero-radar"
+                type="button"
+                onClick={(event) => scrollToIndex(event, "agenda")}
+              >
+                <span className="radar-pulse" aria-hidden="true"><i /><i /><b /></span>
+                <span>
+                  <small>Radar provincial</small>
+                  <strong>
+                    {agendaActivities.length
+                      ? `${agendaActivities.length} actividades listas para explorar`
+                      : "Agenda abierta a toda la provincia"}
+                  </strong>
+                </span>
+                <b aria-hidden="true">Explorar señal →</b>
+              </button>
             </div>
 
             <div className="hero-visual" data-reveal>
-              <ActivitySphere
-                activity={sphereActivity}
-                activities={latestActivities}
-                onOpenImage={(src, alt, title) => setImagePreview({ src, alt, title })}
+              <HeroActivityOrbit
+                activities={orbitActivities}
+                onOpenActivity={setSelectedActivity}
               />
             </div>
           </div>
@@ -911,37 +757,6 @@ export default function PublicView({
       </footer>
 
       {shareNotice && <div className="public-toast" role="status">{shareNotice}</div>}
-
-      {imagePreview && (
-        <div
-          className="image-preview-backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setImagePreview(null);
-          }}
-        >
-          <figure
-            className="image-preview"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="image-preview-title"
-          >
-            <button
-              ref={imagePreviewCloseRef}
-              type="button"
-              aria-label="Cerrar imagen ampliada"
-              onClick={() => setImagePreview(null)}
-            >
-              ×
-            </button>
-            <img src={imagePreview.src} alt={imagePreview.alt} onError={showImageFallback} />
-            <figcaption>
-              <span>Última publicación</span>
-              <strong id="image-preview-title">{imagePreview.title}</strong>
-            </figcaption>
-          </figure>
-        </div>
-      )}
 
       {selectedActivity && (
         <div

@@ -190,7 +190,7 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
     () =>
       [...publishedActivities].sort(
         (a, b) => (b.updatedAt ?? b.createdAt ?? 0) - (a.updatedAt ?? a.createdAt ?? 0),
-      ).slice(0, 3),
+      ).slice(0, 5),
     [publishedActivities],
   );
 
