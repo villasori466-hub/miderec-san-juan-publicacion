@@ -66,6 +66,8 @@ test("admin routes enforce server authorization before data access", async () =>
   assert.match(worker, /X-Frame-Options/);
   assert.match(worker, /Content-Security-Policy/);
   assert.match(worker, /Cache-Control/);
+  assert.match(worker, /pathname\.startsWith\("\/models\/"\)/);
+  assert.match(worker, /model\/gltf-binary/);
   assert.match(
     activitiesApi,
     /export async function GET[\s\S]*?await requireAdminApi\(\)[\s\S]*?listAdminActivities\(\)/,
