@@ -123,7 +123,7 @@ export default function HeroActivityOrbit({
   activities,
   onOpenActivity,
 }: HeroActivityOrbitProps) {
-  const orbitActivities = useMemo(() => activities.slice(0, 5), [activities]);
+  const orbitActivities = useMemo(() => activities.slice(0, 3), [activities]);
   const rootRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<Array<HTMLLIElement | null>>([]);
   const rotationRef = useRef<BasketballRotation>({ x: -0.12, y: -0.28 });
@@ -136,7 +136,7 @@ export default function HeroActivityOrbit({
     baseY: number;
     horizontal: boolean;
   } | null>(null);
-  const orbitRef = useRef({ angle: 1.18, lastTime: 0 });
+  const orbitRef = useRef({ angle: 0.06, lastTime: 0 });
   const orbitPausedRef = useRef(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const detailRef = useRef<HTMLDivElement>(null);
@@ -204,14 +204,14 @@ export default function HeroActivityOrbit({
         ? Math.min(time - orbitRef.current.lastTime, 64)
         : 0;
       orbitRef.current.lastTime = time;
-      if (!selected && !orbitPausedRef.current && pageVisible && !reducedMotion) {
-        orbitRef.current.angle += elapsed * 0.000045;
+      if (!selected && !orbitPausedRef.current && pageVisible) {
+        orbitRef.current.angle += elapsed * (reducedMotion ? 0.000012 : 0.000105);
       }
 
       const mobile = root.clientWidth < 560;
       const visibleCount = mobile ? Math.min(3, count) : count;
-      const radiusX = Math.min(root.clientWidth * (mobile ? 0.34 : 0.42), 260);
-      const radiusY = mobile ? 126 : 168;
+      const radiusX = Math.min(root.clientWidth * (mobile ? 0.29 : 0.43), mobile ? 125 : 315);
+      const radiusY = mobile ? 138 : 182;
 
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
@@ -221,21 +221,24 @@ export default function HeroActivityOrbit({
         }
         card.style.display = "";
         const phase = orbitRef.current.angle + (Math.PI * 2 * index) / visibleCount;
-        const depth = Math.sin(phase);
+        const depth = Math.cos(phase);
         const x = Math.cos(phase) * radiusX;
         const y = Math.sin(phase) * radiusY;
-        const scale = 0.82 + ((depth + 1) / 2) * 0.24;
-        const opacity = 0.48 + ((depth + 1) / 2) * 0.52;
+        const depthProgress = (depth + 1) / 2;
+        const scale = 0.66 + depthProgress * 0.62;
+        const opacity = 0.32 + depthProgress * 0.68;
         card.style.setProperty("--orbit-x", `${x.toFixed(2)}px`);
         card.style.setProperty("--orbit-y", `${y.toFixed(2)}px`);
         card.style.setProperty("--orbit-scale", scale.toFixed(3));
         card.style.setProperty("--orbit-opacity", opacity.toFixed(3));
-        card.style.setProperty("--orbit-blur", depth < -0.35 ? "0.55px" : "0px");
+        card.style.setProperty("--orbit-blur", `${Math.max(0, -depth * 1.15).toFixed(2)}px`);
         card.style.zIndex = selected?.id === orbitActivities[index]?.id
           ? "22"
-          : depth > 0
+          : depth > 0.12
             ? "20"
-            : "3";
+            : depth < -0.12
+              ? "3"
+              : "8";
       });
 
       frame = window.requestAnimationFrame(renderOrbit);

@@ -10,6 +10,7 @@ test("the public site is data-driven and contains no demo events", async () => {
   ]);
 
   assert.match(page, /listPublicActivities/);
+  assert.match(page, /listHeroActivities/);
   assert.match(page, /force-dynamic/);
   assert.match(publicHome, /San Juan/);
   assert.match(publicHome, /se mueve/);
@@ -159,7 +160,10 @@ test("ships the remastered discovery, saved agenda, 3D hero, and accessible prop
   assert.match(styles, /@keyframes radar-scan/);
   assert.match(styles, /@keyframes index-arrival/);
   assert.match(publicHome, /latestActivities/);
-  assert.match(publicHome, /\.slice\(0, 5\)/);
+  assert.match(publicHome, /initialHeroActivities/);
+  assert.match(publicHome, /\.slice\(0, 3\)/);
+  assert.match(heroOrbit, /activities\.slice\(0, 3\)/);
+  assert.match(heroOrbit, /const depth = Math\.cos\(phase\)/);
   assert.match(heroOrbit, /dynamic\(\(\) => import\("\.\/basketball-scene"\)/);
   assert.match(heroOrbit, /ssr: false/);
   assert.match(heroOrbit, /requestIdleCallback/);

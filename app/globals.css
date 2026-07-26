@@ -264,12 +264,12 @@ a {
 
 .hero-layout {
   position: relative;
-  min-height: 680px;
+  min-height: 740px;
   display: grid;
-  grid-template-columns: minmax(0, 1.03fr) minmax(410px, 0.97fr);
+  grid-template-columns: minmax(300px, 0.55fr) minmax(560px, 1.45fr);
   align-items: center;
-  gap: clamp(40px, 7vw, 96px);
-  padding-block: 72px 78px;
+  gap: clamp(24px, 3vw, 44px);
+  padding-block: 58px 66px;
 }
 
 .section-kicker {
@@ -309,14 +309,15 @@ a {
 
 .hero-copy {
   min-width: 0;
+  max-width: 445px;
 }
 
 .hero-copy h1 {
-  max-width: 680px;
-  font-size: clamp(4.2rem, 8vw, 7.6rem);
+  max-width: 5.05ch;
+  font-size: clamp(3.85rem, 5.8vw, 5.85rem);
   font-weight: 900;
   font-style: italic;
-  line-height: 0.78;
+  line-height: 0.8;
   text-transform: uppercase;
 }
 
@@ -328,10 +329,10 @@ a {
 }
 
 .hero-lead {
-  max-width: 650px;
-  margin: 30px 0 0;
+  max-width: 490px;
+  margin: 27px 0 0;
   color: #c4d2e3;
-  font-size: clamp(1.13rem, 1.75vw, 1.36rem);
+  font-size: clamp(1.03rem, 1.35vw, 1.2rem);
   line-height: 1.65;
 }
 
@@ -493,14 +494,14 @@ a {
 .hero-visual {
   position: relative;
   width: 100%;
-  max-width: 680px;
+  max-width: 780px;
   justify-self: end;
 }
 
 .hero-orbit {
   position: relative;
   width: 100%;
-  min-height: 610px;
+  min-height: 660px;
   color: white;
   user-select: none;
   isolation: isolate;
@@ -508,7 +509,7 @@ a {
 
 .orbit-stage {
   position: relative;
-  height: 545px;
+  height: 600px;
   perspective: 1350px;
   isolation: isolate;
 }
@@ -535,8 +536,8 @@ a {
   z-index: 6;
   top: 50%;
   left: 50%;
-  width: 356px;
-  height: 356px;
+  width: 456px;
+  height: 456px;
   overflow: hidden;
   border-radius: 50%;
   filter:
@@ -556,8 +557,8 @@ a {
   z-index: 13;
   top: 50%;
   left: 50%;
-  width: 292px;
-  height: 292px;
+  width: 374px;
+  height: 374px;
   border-radius: 50%;
   cursor: ew-resize;
   outline: none;
@@ -623,8 +624,8 @@ a {
   z-index: 1;
   top: 50%;
   left: 50%;
-  width: 88%;
-  height: 54%;
+  width: 94%;
+  height: 60%;
   border: 1px solid rgba(69, 184, 241, 0.38);
   border-radius: 50%;
   box-shadow: 0 0 28px rgba(69, 184, 241, 0.045);
@@ -633,8 +634,8 @@ a {
 }
 
 .orbit-line-b {
-  width: 72%;
-  height: 67%;
+  width: 77%;
+  height: 70%;
   border-color: rgba(240, 42, 55, 0.42);
   transform: translate(-50%, -50%) rotate(68deg) scaleY(0.46);
 }
@@ -683,7 +684,7 @@ a {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(205px, 38%);
+  width: min(220px, 36%);
   opacity: var(--orbit-opacity);
   filter: blur(var(--orbit-blur));
   transform:
@@ -698,7 +699,7 @@ a {
 
 .orbit-activity button {
   width: 100%;
-  min-height: 70px;
+  min-height: 74px;
   display: grid;
   grid-template-columns: 25px 52px minmax(0, 1fr) 14px;
   align-items: center;
@@ -2455,12 +2456,30 @@ a {
 @media (max-width: 1040px) {
   .hero-layout {
     min-height: auto;
-    grid-template-columns: minmax(0, 0.9fr) minmax(390px, 1.1fr);
-    gap: 32px;
+    grid-template-columns: minmax(280px, 0.68fr) minmax(440px, 1.32fr);
+    gap: 24px;
   }
 
   .hero-copy h1 {
-    font-size: clamp(4rem, 7.2vw, 5.8rem);
+    font-size: clamp(3.55rem, 6.2vw, 4.95rem);
+  }
+
+  .hero-orbit {
+    min-height: 630px;
+  }
+
+  .orbit-stage {
+    height: 570px;
+  }
+
+  .basketball-canvas-frame {
+    width: 420px;
+    height: 420px;
+  }
+
+  .basketball-interaction {
+    width: 344px;
+    height: 344px;
   }
 
   .agenda-controls {
@@ -2549,16 +2568,16 @@ a {
   }
 
   .hero-copy {
-    max-width: 650px;
+    max-width: 500px;
   }
 
   .hero-visual {
-    max-width: 680px;
+    max-width: 760px;
     justify-self: stretch;
   }
 
   .hero-orbit {
-    min-height: 600px;
+    min-height: 650px;
   }
 
   .section-heading {
@@ -2642,7 +2661,7 @@ a {
   }
 
   .hero-copy h1 {
-    font-size: clamp(3.35rem, 15.2vw, 4.4rem);
+    font-size: clamp(3rem, 13.4vw, 3.95rem);
     letter-spacing: -0.045em;
   }
 
@@ -2667,11 +2686,11 @@ a {
   }
 
   .hero-orbit {
-    min-height: 505px;
+    min-height: 535px;
   }
 
   .orbit-stage {
-    height: 442px;
+    height: 472px;
   }
 
   .orbit-title {
@@ -2680,13 +2699,13 @@ a {
   }
 
   .basketball-canvas-frame {
-    width: 276px;
-    height: 276px;
+    width: 312px;
+    height: 312px;
   }
 
   .basketball-interaction {
-    width: 226px;
-    height: 226px;
+    width: 256px;
+    height: 256px;
   }
 
   .orbit-line {
@@ -2700,7 +2719,7 @@ a {
   }
 
   .orbit-activity {
-    width: min(158px, 43%);
+    width: min(138px, 38%);
   }
 
   .orbit-activity:nth-child(n + 4) {

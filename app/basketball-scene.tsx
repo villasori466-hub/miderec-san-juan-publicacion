@@ -48,8 +48,8 @@ function BasketballModel({
     if (!groupRef.current || !visible) return;
     const delta = Math.min(rawDelta, 0.05);
 
-    if (!interacting.current && !reducedMotion) {
-      automaticYaw.current += delta * 0.2;
+    if (!interacting.current) {
+      automaticYaw.current += delta * (reducedMotion ? 0.045 : 0.34);
     }
 
     renderedRotation.current.x = MathUtils.damp(
@@ -73,7 +73,7 @@ function BasketballModel({
 
   return (
     <group ref={groupRef}>
-      <group scale={2.34}>
+      <group scale={2.46}>
         <primitive object={scene} position={[0, -0.593, 0]} />
       </group>
     </group>
@@ -84,7 +84,7 @@ export default function BasketballScene(props: BasketballSceneProps) {
   return (
     <Canvas
       aria-hidden="true"
-      camera={{ fov: 35, near: 0.1, far: 40, position: [0, 0.08, 5.15] }}
+      camera={{ fov: 34, near: 0.1, far: 40, position: [0, 0.08, 5.05] }}
       dpr={[1, 1.5]}
       frameloop={props.visible ? "always" : "demand"}
       gl={{

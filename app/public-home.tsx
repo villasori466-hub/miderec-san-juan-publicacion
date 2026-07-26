@@ -13,14 +13,21 @@ import PublicView from "./public-view";
 
 type PublicHomeProps = {
   initialActivities: PublicActivity[];
+  initialHeroActivities: PublicActivity[];
 };
 
 type SubmitState = "idle" | "sending" | "success" | "error";
 
-function normaliseActivities(value: unknown): PublicActivity[] | null {
+function normaliseActivityPayload(value: unknown) {
   if (!value || typeof value !== "object") return null;
-  const activities = (value as { activities?: unknown }).activities;
-  return Array.isArray(activities) ? (activities as PublicActivity[]) : null;
+  const payload = value as { activities?: unknown; heroActivities?: unknown };
+  if (!Array.isArray(payload.activities)) return null;
+  return {
+    activities: payload.activities as PublicActivity[],
+    heroActivities: Array.isArray(payload.heroActivities)
+      ? (payload.heroActivities as PublicActivity[])
+      : (payload.activities as PublicActivity[]).slice(0, 3),
+  };
 }
 
 function activityTimestamp(activity: PublicActivity) {
@@ -46,8 +53,12 @@ function isPubliclyVisible(activity: PublicActivity, now: number) {
   return editoriallyLive && reached && notExpired;
 }
 
-export default function PublicHome({ initialActivities }: PublicHomeProps) {
+export default function PublicHome({
+  initialActivities,
+  initialHeroActivities,
+}: PublicHomeProps) {
   const [activities, setActivities] = useState(initialActivities);
+  const [heroActivities, setHeroActivities] = useState(initialHeroActivities);
   const [modalOpen, setModalOpen] = useState(false);
   const [dateStatus, setDateStatus] = useState<"confirmed" | "tbd">("confirmed");
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
@@ -69,9 +80,10 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
           signal: AbortSignal.timeout(12_000),
         });
         if (!response.ok) throw new Error("No se pudo actualizar la agenda");
-        const next = normaliseActivities(await response.json());
+        const next = normaliseActivityPayload(await response.json());
         if (active && next) {
-          setActivities(next);
+          setActivities(next.activities);
+          setHeroActivities(next.heroActivities);
           setRefreshNotice("Agenda actualizada");
         }
       } catch {
@@ -188,10 +200,10 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
 
   const latestActivities = useMemo(
     () =>
-      [...publishedActivities].sort(
+      [...heroActivities].sort(
         (a, b) => (b.updatedAt ?? b.createdAt ?? 0) - (a.updatedAt ?? a.createdAt ?? 0),
-      ).slice(0, 5),
-    [publishedActivities],
+      ).slice(0, 3),
+    [heroActivities],
   );
 
   const disciplines = useMemo(

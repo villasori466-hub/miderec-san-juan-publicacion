@@ -44,6 +44,14 @@ export type PublicActivity = Omit<
   "createdBy" | "updatedBy" | "version"
 >;
 
+export function toPublicActivity(activity: Activity): PublicActivity {
+  const { createdBy, updatedBy, version, ...publicActivity } = activity;
+  void createdBy;
+  void updatedBy;
+  void version;
+  return publicActivity;
+}
+
 export type ActivitySubmissionInput = {
   title: string;
   sport: string;

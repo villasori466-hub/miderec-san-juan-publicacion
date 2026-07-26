@@ -21,6 +21,14 @@ export async function listPublicActivities() {
   )).orderBy(desc(activities.featured), sql`case when ${activities.startAt} is null then 1 else 0 end`, asc(activities.startAt), desc(activities.createdAt)).limit(250);
 }
 
+export async function listHeroActivities() {
+  return getDb()
+    .select()
+    .from(activities)
+    .orderBy(desc(activities.updatedAt), desc(activities.createdAt))
+    .limit(3);
+}
+
 export async function listAdminActivities() {
   return getDb().select().from(activities).orderBy(desc(activities.updatedAt)).limit(500);
 }

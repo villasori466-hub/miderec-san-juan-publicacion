@@ -1,11 +1,20 @@
-import { listPublicActivities } from "@/db/activities";
+import { listHeroActivities, listPublicActivities } from "@/db/activities";
+import { toPublicActivity } from "@/lib/activity-types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const activities = (await listPublicActivities()).map(({ createdBy: _createdBy, updatedBy: _updatedBy, version: _version, ...activity }) => activity);
-    return Response.json({ activities }, { headers: { "Cache-Control": "no-store" } });
+    const [publicRows, heroRows] = await Promise.all([
+      listPublicActivities(),
+      listHeroActivities(),
+    ]);
+    const activities = publicRows.map(toPublicActivity);
+    const heroActivities = heroRows.map(toPublicActivity);
+    return Response.json(
+      { activities, heroActivities },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch {
     return Response.json({ error: "Activities are temporarily unavailable" }, { status: 500 });
   }
