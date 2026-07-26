@@ -313,22 +313,28 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
                   <p>La propuesta será revisada antes de aparecer en la agenda pública.</p>
                 </div>
 
-                <form onSubmit={submitProposal}>
+                <ol className="proposal-steps" aria-label="Proceso de publicación">
+                  <li><span>01</span><strong>Completa</strong><small>2–3 minutos</small></li>
+                  <li><span>02</span><strong>Revisamos</strong><small>Datos y enlaces</small></li>
+                  <li><span>03</span><strong>Publicamos</strong><small>Tras aprobación</small></li>
+                </ol>
+
+                <form onSubmit={submitProposal} aria-busy={submitState === "sending"}>
                   <div className="form-grid">
                     <label className="form-span-2">Nombre de la actividad
-                      <input ref={firstFieldRef} name="title" required autoComplete="off" />
+                      <input ref={firstFieldRef} name="title" required minLength={3} maxLength={160} autoComplete="off" />
                     </label>
                     <label>Disciplina
-                      <input name="sport" required autoComplete="off" />
+                      <input name="sport" required minLength={2} maxLength={80} autoComplete="off" />
                     </label>
                     <label>Municipio
-                      <input name="municipality" required autoComplete="address-level2" />
+                      <input name="municipality" required minLength={2} maxLength={100} autoComplete="address-level2" />
                     </label>
                     <label className="form-span-2">Lugar o instalación
-                      <input name="venue" required autoComplete="off" />
+                      <input name="venue" required minLength={2} maxLength={180} autoComplete="off" />
                     </label>
                     <label className="form-span-2">Descripción
-                      <textarea name="summary" rows={4} required />
+                      <textarea name="summary" rows={4} required minLength={10} maxLength={3000} />
                     </label>
                     <label className="form-span-2">Estado de la fecha
                       <select value={dateStatus} onChange={(event) => setDateStatus(event.target.value as "confirmed" | "tbd")}>
@@ -356,13 +362,13 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
                       <input name="registrationUrl" type="url" inputMode="url" placeholder="https://" />
                     </label>
                     <label>Nombre de contacto
-                      <input name="contactName" required autoComplete="name" />
+                      <input name="contactName" required minLength={2} maxLength={120} autoComplete="name" />
                     </label>
                     <label>Correo de contacto
-                      <input name="contactEmail" type="email" required autoComplete="email" />
+                      <input name="contactEmail" type="email" required maxLength={254} autoComplete="email" />
                     </label>
                     <label className="form-span-2">Teléfono opcional
-                      <input name="contactPhone" type="tel" autoComplete="tel" />
+                      <input name="contactPhone" type="tel" maxLength={40} autoComplete="tel" />
                     </label>
                     <label className="honeypot" aria-hidden="true">Sitio web
                       <input name="website" tabIndex={-1} autoComplete="off" />

@@ -68,9 +68,9 @@ export async function generateMetadata(): Promise<Metadata> {
         "El punto de encuentro para la actualidad deportiva de la provincia San Juan.",
       images: [
         {
-          url: `${origin}/og-v3.png`,
-          width: 1729,
-          height: 910,
+          url: `${origin}/og-v4.jpg`,
+          width: 1731,
+          height: 909,
           alt: "MIDEREC Dirección Provincial San Juan — El deporte nos une. San Juan se mueve.",
         },
       ],
@@ -79,7 +79,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "MIDEREC — Dirección Provincial San Juan",
       description: "El deporte nos une. San Juan se mueve.",
-      images: [`${origin}/og-v3.png`],
+      images: [`${origin}/og-v4.jpg`],
     },
   };
 }

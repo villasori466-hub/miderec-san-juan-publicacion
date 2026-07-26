@@ -15,7 +15,7 @@ test("the public site is data-driven and contains no demo events", async () => {
   assert.match(publicHome, /se mueve/);
   assert.match(publicHome, /Proponer (una )?actividad/);
   assert.match(publicHome, /Las pr.ximas actividades aparecer.n aqu./i);
-  assert.match(layout, /og-v3\.png/);
+  assert.match(layout, /og-v4\.jpg/);
   assert.doesNotMatch(
     `${page}\n${publicHome}`,
     /Contenido de muestra|Festival deportivo provincial/i,
@@ -74,9 +74,47 @@ test("wires persistence, automation, submissions, media, and metadata", async ()
 
   await Promise.all([
     access(new URL("../public/miderec-logo.svg", import.meta.url)),
-    access(new URL("../public/og-v3.png", import.meta.url)),
+    access(new URL("../public/og-v4.jpg", import.meta.url)),
     access(new URL("../drizzle/0000_slow_imperial_guard.sql", import.meta.url)),
     access(new URL("../app/api/admin/media/route.ts", import.meta.url)),
     access(new URL("../app/media/[...key]/route.ts", import.meta.url)),
   ]);
+});
+
+test("ships the remastered discovery, saved agenda, calendar, and accessible proposal flow", async () => {
+  const [publicView, publicHome, styles, adminDashboard, adminStyles, login] = await Promise.all([
+    readFile(new URL("../app/public-view.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/public-home.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/AdminDashboard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/admin.module.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/local-login/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(publicView, /SAVED_KEY/);
+  assert.match(publicView, /downloadCalendar/);
+  assert.match(publicView, /localityCounts/);
+  assert.match(publicView, /activity-dialog/);
+  assert.match(publicView, /IntersectionObserver/);
+  assert.match(publicView, /aria-pressed=/);
+  assert.match(publicView, /SportOrbit/);
+  assert.match(publicView, /scrollToIndex/);
+  assert.match(publicView, /section-index/);
+  assert.match(styles, /\.agenda-controls/);
+  assert.match(styles, /\.locality-section/);
+  assert.match(styles, /@keyframes hero-breathe/);
+  assert.match(styles, /\.ball-3d/);
+  assert.match(styles, /@keyframes orbit-a/);
+  assert.match(styles, /@keyframes index-arrival/);
+  assert.match(publicHome, /aria-busy=/);
+  assert.match(publicHome, /Proceso de publicación/);
+  assert.match(publicHome, /maxLength=\{3000\}/);
+  assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(adminDashboard, /municipalityFilter/);
+  assert.match(adminDashboard, /submissionFilter/);
+  assert.match(adminDashboard, /Exportar CSV/);
+  assert.match(adminStyles, /\.submissionFilters/);
+  assert.match(adminStyles, /Remaster editorial 2026/);
+  assert.match(login, /styles\.loginForm/);
+  assert.doesNotMatch(login, /style=\{\{/);
 });

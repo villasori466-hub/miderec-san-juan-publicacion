@@ -91,109 +91,58 @@ export default async function LocalLoginPage({
 
   return (
     <main className={styles.accessPage}>
-      <section className={styles.accessCard} style={{ maxWidth: "460px" }} aria-labelledby="login-title">
+      <section className={`${styles.accessCard} ${styles.loginCard}`} aria-labelledby="login-title">
         <span className={styles.accessMark} aria-hidden="true">
           SJ
         </span>
-        <p className={styles.eyebrow} style={{ margin: "0 0 8px 0", fontSize: "14px", fontWeight: "700", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        <p className={styles.eyebrow}>
           Control de acceso local
         </p>
-        <h1 id="login-title" style={{ margin: "0 0 12px 0", font: "800 36px/1 var(--font-public-display), Arial Narrow, sans-serif" }}>
-          Iniciar Sesión
-        </h1>
-        <p style={{ margin: "0 0 24px 0", color: "#a5b8da", fontSize: "15px", lineHeight: "1.5" }}>
+        <h1 id="login-title">Iniciar sesión</h1>
+        <p className={styles.loginLead}>
           Ingresa tus credenciales de administrador para gestionar la plataforma localmente.
         </p>
 
-        <form action={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label htmlFor="email" style={{ fontSize: "14px", fontWeight: "700", color: "#9db9ee" }}>
-              Correo electrónico
-            </label>
+        <form action={handleLogin} className={styles.loginForm}>
+          <div className={styles.loginField}>
+            <label htmlFor="email">Correo electrónico</label>
             <input
+              className={styles.loginInput}
               id="email"
               name="email"
               type="email"
               required
               placeholder="ejemplo@gmail.com"
-              style={{
-                width: "100%",
-                height: "48px",
-                padding: "0 14px",
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.16)",
-                borderRadius: "10px",
-                color: "#fff",
-                fontSize: "15px",
-                outline: "none",
-                transition: "border-color 180ms ease, box-shadow 180ms ease",
-              }}
+              autoComplete="email"
             />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label htmlFor="password" style={{ fontSize: "14px", fontWeight: "700", color: "#9db9ee" }}>
-              Contraseña
-            </label>
+          <div className={styles.loginField}>
+            <label htmlFor="password">Contraseña</label>
             <input
+              className={styles.loginInput}
               id="password"
               name="password"
               type="password"
               required
               placeholder="••••••••"
-              style={{
-                width: "100%",
-                height: "48px",
-                padding: "0 14px",
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.16)",
-                borderRadius: "10px",
-                color: "#fff",
-                fontSize: "15px",
-                outline: "none",
-                transition: "border-color 180ms ease, box-shadow 180ms ease",
-              }}
+              autoComplete="current-password"
             />
           </div>
 
           {errorMessage && (
-            <div
-              role="alert"
-              style={{
-                padding: "12px 14px",
-                background: "rgba(236, 37, 48, 0.15)",
-                borderLeft: "4px solid #ec2530",
-                color: "#ff8c93",
-                fontSize: "14px",
-                fontWeight: "600",
-                borderRadius: "4px",
-              }}
-            >
+            <div className={styles.loginAlert} role="alert">
               {errorMessage}
             </div>
           )}
 
-          <button
-            type="submit"
-            style={{
-              height: "48px",
-              marginTop: "8px",
-              background: "linear-gradient(180deg, #f43b45, #d61a25)",
-              color: "#fff",
-              fontSize: "16px",
-              fontWeight: "750",
-              borderRadius: "24px",
-              cursor: "pointer",
-              transition: "transform 150ms ease, box-shadow 150ms ease",
-              boxShadow: "0 8px 20px rgba(236, 37, 48, 0.25)",
-            }}
-          >
-            Entrar al Panel
+          <button className={styles.loginSubmit} type="submit">
+            Entrar al panel <span aria-hidden="true">→</span>
           </button>
         </form>
 
-        <div style={{ marginTop: "24px", textAlign: "center", borderTop: "1px solid rgba(255, 255, 255, 0.1)", paddingTop: "18px" }}>
-          <Link href="/" style={{ color: "#a5b8da", fontSize: "14px", textDecoration: "none", transition: "color 150ms ease" }}>
+        <div className={styles.loginBack}>
+          <Link href="/">
             ← Volver al portal público
           </Link>
         </div>

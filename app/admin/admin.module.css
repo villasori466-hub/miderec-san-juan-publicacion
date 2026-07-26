@@ -1947,6 +1947,133 @@
   color: #7ad7ff;
 }
 
+.loginCard {
+  max-width: 470px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginCard::after {
+  content: "";
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  right: -86px;
+  bottom: -100px;
+  border: 22px solid rgba(122, 215, 255, .07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.loginCard .eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.accessCard .loginLead {
+  margin: 14px 0 26px;
+  color: #b9c9e4;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.loginForm {
+  display: grid;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.loginField {
+  display: grid;
+  gap: 8px;
+}
+
+.loginField label {
+  color: #b9cef5;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: .025em;
+}
+
+.loginInput {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(255,255,255,.19);
+  border-radius: 13px;
+  outline: 0;
+  background: rgba(255,255,255,.075);
+  color: #fff;
+  font-size: 15px;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.loginInput::placeholder { color: #7185aa; }
+.loginInput:hover { border-color: rgba(122,215,255,.48); background: rgba(255,255,255,.095); }
+.loginInput:focus {
+  border-color: #7ad7ff;
+  background: rgba(255,255,255,.11);
+  box-shadow: 0 0 0 4px rgba(122,215,255,.14);
+  transform: translateY(-1px);
+}
+
+.loginAlert {
+  padding: 13px 15px;
+  border-left: 4px solid #ec2530;
+  border-radius: 7px;
+  background: rgba(236,37,48,.14);
+  color: #ffb0b5;
+  font-size: 13px;
+  font-weight: 650;
+  animation: riseIn 280ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.loginSubmit {
+  min-height: 52px;
+  margin-top: 4px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f43b45, #d61a25);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(236,37,48,.3), inset 0 1px 0 rgba(255,255,255,.25);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 780;
+  transition: transform 200ms cubic-bezier(.16,1,.3,1), box-shadow 200ms ease;
+}
+
+.loginSubmit span { transition: transform 200ms cubic-bezier(.16,1,.3,1); }
+.loginSubmit:hover {
+  box-shadow: 0 15px 34px rgba(236,37,48,.38), inset 0 1px 0 rgba(255,255,255,.25);
+  transform: translateY(-2px);
+}
+.loginSubmit:hover span { transform: translateX(4px); }
+.loginSubmit:active { transform: translateY(0) scale(.985); }
+
+.loginBack {
+  margin-top: 24px;
+  padding-top: 18px;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255,255,255,.1);
+  text-align: center;
+}
+
+.accessCard .loginBack a {
+  color: #a5b8da;
+  font-size: 13px;
+  text-decoration: none;
+}
+
 /* ————————————————— Responsive ————————————————— */
 
 @media (max-width: 1080px) {
@@ -2257,5 +2384,350 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Remaster editorial 2026: menos chrome, más control operativo */
+.adminShell {
+  grid-template-columns: 252px minmax(0, 1fr);
+  background: #f3f4f2;
+}
+
+.sidebar {
+  padding: 24px 17px 20px;
+  background:
+    linear-gradient(rgba(69, 184, 241, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(69, 184, 241, 0.045) 1px, transparent 1px),
+    #06152c;
+  background-size: 52px 52px, 52px 52px, auto;
+  border-right: 0;
+}
+
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: var(--red);
+}
+
+.adminBrand > span,
+.mobileBrand span {
+  border-radius: 5px;
+  transform: skewX(-5deg);
+}
+
+.sidebarNav button {
+  border-radius: 6px;
+}
+
+.sidebarNav .navActive {
+  background: #fff;
+  color: var(--navy);
+  box-shadow: none;
+}
+
+.workspace {
+  position: relative;
+}
+
+.workspace::before {
+  content: "CENTRO DE CONTENIDOS  /  SAN JUAN";
+  position: absolute;
+  top: 18px;
+  right: 32px;
+  color: #a2aab4;
+  font: 700 10px/1 var(--display);
+  letter-spacing: 0.14em;
+}
+
+.workspaceInner {
+  width: min(1320px, calc(100% - 64px));
+  padding-top: 54px;
+}
+
+.pageHeading {
+  padding-bottom: 25px;
+  border-bottom: 1px solid #d7dadd;
+}
+
+.pageHeading h1 {
+  font-size: clamp(42px, 4.5vw, 62px);
+  font-style: italic;
+}
+
+.primaryButton,
+.publishButton,
+.acceptButton {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.metrics {
+  gap: 1px;
+  overflow: hidden;
+  padding: 1px;
+  background: #d9dcdf;
+  border-radius: 12px;
+}
+
+.metrics article {
+  min-height: 108px;
+  padding: 18px 19px;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.metrics article:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.metrics article::before {
+  width: 4px;
+  height: 100%;
+}
+
+.metricIcon {
+  opacity: 0.8;
+  border-radius: 6px;
+}
+
+.toolbar {
+  grid-template-columns: minmax(250px, 1.4fr) repeat(4, minmax(128px, 0.62fr)) auto auto;
+  align-items: end;
+  gap: 9px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #dfe2e3;
+  border-radius: 12px;
+}
+
+.searchField,
+.filterField select,
+.refreshButton {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.activityPanel,
+.proposalCard {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.activityPanel:has(.rowActions details[open]) {
+  overflow: visible;
+}
+
+.activityRow {
+  grid-template-columns: 72px minmax(0, 1fr) 154px;
+  padding-block: 17px;
+}
+
+.activityThumb {
+  width: 72px;
+  border-radius: 7px;
+}
+
+.rowActions {
+  width: 154px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.rowActions .quickEdit,
+.rowActions details > summary {
+  min-height: 37px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  color: var(--navy);
+  background: #fff;
+  border: 1px solid #d4d9df;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 750;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rowActions .quickEdit {
+  color: #fff;
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.rowActions .quickEdit:hover {
+  padding-left: 12px;
+  color: white;
+  background: var(--blue);
+}
+
+.rowActions details {
+  position: relative;
+}
+
+.rowActions details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.rowActions details > summary span {
+  margin-left: 7px;
+  color: #8893a0;
+  letter-spacing: 0.05em;
+}
+
+.rowActions details[open] > summary {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(10, 99, 212, 0.11);
+}
+
+.rowActions details > div {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 7px);
+  right: 0;
+  min-width: 210px;
+  display: grid;
+  gap: 2px;
+  padding: 7px;
+  background: #fff;
+  border: 1px solid #d8dde4;
+  border-radius: 9px;
+  box-shadow: 0 18px 46px rgba(3, 19, 47, 0.18);
+}
+
+.rowActions details > div button {
+  width: 100%;
+  min-height: 38px;
+}
+
+.activityRow:has(.rowActions details[open]) {
+  z-index: 5;
+}
+
+.submissionFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -3px 0 20px;
+}
+
+.submissionFilters button {
+  min-height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 13px;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid #d8dde4;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.submissionFilters button span {
+  min-width: 22px;
+  padding: 2px 6px;
+  color: #6c7786;
+  background: #eef1f4;
+  border-radius: 99px;
+  text-align: center;
+}
+
+.submissionFilters .submissionFilterActive {
+  color: white;
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.submissionFilters .submissionFilterActive span {
+  color: white;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+@media (max-width: 1260px) {
+  .toolbar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .searchField {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1080px) {
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace::before {
+    display: none;
+  }
+
+  .workspaceInner {
+    width: min(100% - 40px, 900px);
+  }
+}
+
+@media (max-width: 760px) {
+  .workspaceInner {
+    width: min(100% - 24px, 680px);
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px;
+  }
+
+  .searchField {
+    grid-column: 1 / -1;
+  }
+
+  .activityRow {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .rowActions {
+    width: 100%;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-left: 65px;
+  }
+
+  .rowActions details > div {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (max-width: 470px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .searchField {
+    grid-column: auto;
+  }
+
+  .rowActions {
+    padding-left: 0;
+  }
+
+  .submissionFilters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .submissionFilters button {
+    justify-content: space-between;
   }
 }

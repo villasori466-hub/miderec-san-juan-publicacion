@@ -131,7 +131,13 @@ function validateChanges(input: Record<string, unknown>, allowed = activityKeys)
   if ("editorialStatus" in input) changes.editorialStatus = enumValue(input.editorialStatus, "editorialStatus", editorialStatuses, "draft", errors);
   if ("publishAt" in input) changes.publishAt = nullableUnix(input.publishAt, "publishAt", errors);
   if ("unpublishAt" in input) changes.unpublishAt = nullableUnix(input.unpublishAt, "unpublishAt", errors);
-  if ("featured" in input) input.featured === true || input.featured === false ? changes.featured = input.featured : errors.push("featured must be a boolean");
+  if ("featured" in input) {
+    if (input.featured === true || input.featured === false) {
+      changes.featured = input.featured;
+    } else {
+      errors.push("featured must be a boolean");
+    }
+  }
   if ("imageUrl" in input) changes.imageUrl = url(input.imageUrl, "imageUrl", errors);
   if ("videoUrl" in input) changes.videoUrl = url(input.videoUrl, "videoUrl", errors);
   if ("registrationUrl" in input) changes.registrationUrl = url(input.registrationUrl, "registrationUrl", errors);

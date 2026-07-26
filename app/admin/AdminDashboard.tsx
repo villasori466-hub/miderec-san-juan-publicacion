@@ -329,6 +329,10 @@ export default function AdminDashboard({
   const [loadError, setLoadError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | EditorialStatus>("all");
+  const [municipalityFilter, setMunicipalityFilter] = useState("all");
+  const [phaseFilter, setPhaseFilter] = useState<"all" | "future" | "current" | "past" | "tbd">("all");
+  const [sortMode, setSortMode] = useState<"updated" | "date" | "title">("updated");
+  const [submissionFilter, setSubmissionFilter] = useState<"all" | Submission["status"]>("pending");
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Activity | null>(null);
   const [draft, setDraft] = useState<ActivityDraft>(EMPTY_DRAFT);
@@ -421,19 +425,47 @@ export default function AdminDashboard({
     };
   }, [localCoverPreview]);
 
+  const municipalities = useMemo(
+    () =>
+      Array.from(new Set(activities.map((activity) => activity.municipality.trim())))
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, "es")),
+    [activities],
+  );
+
   const filteredActivities = useMemo(() => {
     const term = search.trim().toLocaleLowerCase("es");
-    return activities.filter((activity) => {
-      const statusMatches =
-        statusFilter === "all" || activity.editorialStatus === statusFilter;
-      const textMatches =
-        !term ||
-        [activity.title, activity.summary, activity.municipality, getSportName(activity)]
-          .filter(Boolean)
-          .some((value) => String(value).toLocaleLowerCase("es").includes(term));
-      return statusMatches && textMatches;
-    });
-  }, [activities, search, statusFilter]);
+    return activities
+      .filter((activity) => {
+        const statusMatches =
+          statusFilter === "all" || activity.editorialStatus === statusFilter;
+        const municipalityMatches =
+          municipalityFilter === "all" || activity.municipality === municipalityFilter;
+        const phaseMatches = phaseFilter === "all" || statusPhase(activity) === phaseFilter;
+        const textMatches =
+          !term ||
+          [activity.title, activity.summary, activity.municipality, activity.venue, getSportName(activity)]
+            .filter(Boolean)
+            .some((value) => String(value).toLocaleLowerCase("es").includes(term));
+        return statusMatches && municipalityMatches && phaseMatches && textMatches;
+      })
+      .sort((a, b) => {
+        if (sortMode === "title") return a.title.localeCompare(b.title, "es");
+        if (sortMode === "date") {
+          return (asDate(a.startAt)?.getTime() ?? Number.MAX_SAFE_INTEGER)
+            - (asDate(b.startAt)?.getTime() ?? Number.MAX_SAFE_INTEGER);
+        }
+        return (asDate(b.updatedAt)?.getTime() ?? 0) - (asDate(a.updatedAt)?.getTime() ?? 0);
+      });
+  }, [activities, municipalityFilter, phaseFilter, search, sortMode, statusFilter]);
+
+  const filteredSubmissions = useMemo(
+    () =>
+      submissions.filter(
+        (submission) => submissionFilter === "all" || submission.status === submissionFilter,
+      ),
+    [submissionFilter, submissions],
+  );
 
   const metrics = useMemo(
     () => ({
@@ -1039,6 +1071,44 @@ export default function AdminDashboard({
                     <option value="archived">Archivadas</option>
                   </select>
                 </label>
+                <label className={styles.filterField}>
+                  <span>Localidad</span>
+                  <select
+                    value={municipalityFilter}
+                    onChange={(event) => setMunicipalityFilter(event.target.value)}
+                  >
+                    <option value="all">Todas</option>
+                    {municipalities.map((name) => (
+                      <option key={name} value={name}>{name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className={styles.filterField}>
+                  <span>Momento</span>
+                  <select
+                    value={phaseFilter}
+                    onChange={(event) =>
+                      setPhaseFilter(event.target.value as "all" | "future" | "current" | "past" | "tbd")
+                    }
+                  >
+                    <option value="all">Cualquier fecha</option>
+                    <option value="future">Próximas</option>
+                    <option value="current">En curso</option>
+                    <option value="past">Finalizadas</option>
+                    <option value="tbd">Por confirmar</option>
+                  </select>
+                </label>
+                <label className={styles.filterField}>
+                  <span>Orden</span>
+                  <select
+                    value={sortMode}
+                    onChange={(event) => setSortMode(event.target.value as "updated" | "date" | "title")}
+                  >
+                    <option value="updated">Edición reciente</option>
+                    <option value="date">Fecha del evento</option>
+                    <option value="title">Título A–Z</option>
+                  </select>
+                </label>
                 <button
                   className={styles.refreshButton}
                   type="button"
@@ -1128,19 +1198,43 @@ export default function AdminDashboard({
                 </p>
               </div>
 
+              <div className={styles.submissionFilters} aria-label="Filtrar propuestas">
+                {([
+                  ["pending", "Pendientes"],
+                  ["accepted", "Aceptadas"],
+                  ["rejected", "Rechazadas"],
+                  ["all", "Todas"],
+                ] as const).map(([value, label]) => (
+                  <button
+                    type="button"
+                    key={value}
+                    className={submissionFilter === value ? styles.submissionFilterActive : ""}
+                    aria-pressed={submissionFilter === value}
+                    onClick={() => setSubmissionFilter(value)}
+                  >
+                    {label}
+                    <span>
+                      {value === "all"
+                        ? submissions.length
+                        : submissions.filter((item) => item.status === value).length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
               {loadingSubmissions ? (
                 <section className={styles.activityPanel}>
                   <LoadingRows label="Cargando propuestas" />
                 </section>
-              ) : submissions.length === 0 ? (
+              ) : filteredSubmissions.length === 0 ? (
                 <section className={`${styles.activityPanel} ${styles.emptyState}`}>
                   <span aria-hidden="true">✓</span>
-                  <h2>No hay propuestas pendientes</h2>
-                  <p>Las nuevas solicitudes de la comunidad aparecerán aquí.</p>
+                  <h2>No hay propuestas en esta vista</h2>
+                  <p>Cambia el filtro para consultar el resto de la bandeja.</p>
                 </section>
               ) : (
                 <section className={styles.proposalGrid} aria-label="Propuestas de actividades">
-                  {submissions.map((submission, index) => (
+                  {filteredSubmissions.map((submission, index) => (
                     <SubmissionCard
                       key={submission.id}
                       index={index}
@@ -1582,40 +1676,49 @@ function ActivityRow({
         </div>
       </div>
       <div className={styles.rowActions}>
-        <button type="button" onClick={(event) => onEdit(activity, event.currentTarget)}>
+        <button
+          className={styles.quickEdit}
+          type="button"
+          onClick={(event) => onEdit(activity, event.currentTarget)}
+        >
           Editar
         </button>
-        {activity.editorialStatus !== "archived" && (
-          <button type="button" onClick={() => void onTogglePublish(activity)}>
-            {activity.editorialStatus === "published" ? "Ocultar del sitio" : "Publicar ahora"}
-          </button>
-        )}
-        {activity.editorialStatus !== "archived" && (
-          <button type="button" onClick={() => void onToggleFeatured(activity)}>
-            {activity.featured ? "Quitar destaque" : "Destacar en portada"}
-          </button>
-        )}
-        <button type="button" onClick={() => void onDuplicate(activity)}>
-          Duplicar
-        </button>
-        {activity.eventStatus === "scheduled" ? (
-          <>
-            <button type="button" onClick={() => void onEventStatus(activity, "postponed")}>Posponer</button>
-            <button className={styles.dangerText} type="button" onClick={() => void onEventStatus(activity, "cancelled")}>Cancelar evento</button>
-          </>
-        ) : (
-          <button type="button" onClick={() => void onEventStatus(activity, "scheduled")}>Reactivar</button>
-        )}
-        {activity.editorialStatus !== "archived" && (
-          <button className={styles.dangerText} type="button" onClick={() => void onArchive(activity)}>
-            Archivar
-          </button>
-        )}
-        {activity.editorialStatus === "archived" && (
-          <button className={styles.dangerText} type="button" onClick={() => void onDelete(activity)}>
-            Eliminar definitivamente
-          </button>
-        )}
+        <details>
+          <summary aria-label={`Más acciones para ${activity.title}`}>Más <span aria-hidden="true">•••</span></summary>
+          <div>
+            {activity.editorialStatus !== "archived" && (
+              <button type="button" onClick={() => void onTogglePublish(activity)}>
+                {activity.editorialStatus === "published" ? "Ocultar del sitio" : "Publicar ahora"}
+              </button>
+            )}
+            {activity.editorialStatus !== "archived" && (
+              <button type="button" onClick={() => void onToggleFeatured(activity)}>
+                {activity.featured ? "Quitar destaque" : "Destacar en portada"}
+              </button>
+            )}
+            <button type="button" onClick={() => void onDuplicate(activity)}>
+              Duplicar
+            </button>
+            {activity.eventStatus === "scheduled" ? (
+              <>
+                <button type="button" onClick={() => void onEventStatus(activity, "postponed")}>Posponer</button>
+                <button className={styles.dangerText} type="button" onClick={() => void onEventStatus(activity, "cancelled")}>Cancelar evento</button>
+              </>
+            ) : (
+              <button type="button" onClick={() => void onEventStatus(activity, "scheduled")}>Reactivar</button>
+            )}
+            {activity.editorialStatus !== "archived" && (
+              <button className={styles.dangerText} type="button" onClick={() => void onArchive(activity)}>
+                Archivar
+              </button>
+            )}
+            {activity.editorialStatus === "archived" && (
+              <button className={styles.dangerText} type="button" onClick={() => void onDelete(activity)}>
+                Eliminar definitivamente
+              </button>
+            )}
+          </div>
+        </details>
       </div>
     </article>
   );
