@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
   type SyntheticEvent,
@@ -36,6 +37,7 @@ const timeFormatter = new Intl.DateTimeFormat("es-DO", {
 
 type PublicViewProps = {
   heroActivity: PublicActivity | null;
+  latestActivities: PublicActivity[];
   agendaActivities: PublicActivity[];
   recentActivities: PublicActivity[];
   disciplines: string[];
@@ -148,57 +150,165 @@ async function shareActivity(activity: PublicActivity) {
   return "Enlace copiado";
 }
 
-function SportOrbit({
-  label,
-  onActivate,
+function ActivitySphere({
+  activity,
+  activities,
+  onOpenImage,
 }: {
-  label: string;
-  onActivate(): void;
+  activity: PublicActivity | null;
+  activities: PublicActivity[];
+  onOpenImage(src: string, alt: string, title: string): void;
 }) {
-  function handlePointerMove(event: ReactPointerEvent<HTMLButtonElement>) {
-    if (!window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches) {
-      return;
-    }
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width;
-    const y = (event.clientY - bounds.top) / bounds.height;
-    event.currentTarget.style.setProperty("--orbit-rx", `${((0.5 - y) * 22).toFixed(2)}deg`);
-    event.currentTarget.style.setProperty("--orbit-ry", `${((x - 0.5) * 28).toFixed(2)}deg`);
-    event.currentTarget.style.setProperty("--orbit-light-x", `${(x * 100).toFixed(1)}%`);
-    event.currentTarget.style.setProperty("--orbit-light-y", `${(y * 100).toFixed(1)}%`);
+  const rootRef = useRef<HTMLElement>(null);
+  const rotationRef = useRef({ x: -7, y: -16 });
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    baseX: number;
+    baseY: number;
+    moved: boolean;
+  } | null>(null);
+  const imageSrc = activity?.imageUrl || "/hero-deporte.webp";
+  const title = activity?.title || "La próxima actividad puede comenzar contigo.";
+
+  function applyRotation(x: number, y: number) {
+    const nextX = Math.max(-48, Math.min(48, x));
+    rotationRef.current = { x: nextX, y };
+    rootRef.current?.style.setProperty("--sphere-rx", `${nextX.toFixed(2)}deg`);
+    rootRef.current?.style.setProperty("--sphere-ry", `${y.toFixed(2)}deg`);
   }
 
-  function resetPointer(event: ReactPointerEvent<HTMLButtonElement>) {
-    event.currentTarget.style.setProperty("--orbit-rx", "0deg");
-    event.currentTarget.style.setProperty("--orbit-ry", "0deg");
-    event.currentTarget.style.setProperty("--orbit-light-x", "30%");
-    event.currentTarget.style.setProperty("--orbit-light-y", "20%");
+  function openActivityImage(targetActivity: PublicActivity | null) {
+    const src = targetActivity?.imageUrl || "/hero-deporte.webp";
+    const imageTitle = targetActivity?.title || "San Juan se mueve.";
+    onOpenImage(
+      src,
+      targetActivity ? `Imagen de ${targetActivity.title}` : "Atleta en una pista deportiva",
+      imageTitle,
+    );
+  }
+
+  function openImage() {
+    openActivityImage(activity);
+  }
+
+  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      baseX: rotationRef.current.x,
+      baseY: rotationRef.current.y,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.classList.add("is-dragging");
+  }
+
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const deltaX = event.clientX - drag.startX;
+    const deltaY = event.clientY - drag.startY;
+    if (Math.hypot(deltaX, deltaY) > 5) drag.moved = true;
+    applyRotation(drag.baseX - deltaY * 0.24, drag.baseY + deltaX * 0.3);
+  }
+
+  function finishPointer(event: ReactPointerEvent<HTMLDivElement>, activate: boolean) {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    event.currentTarget.classList.remove("is-dragging");
+    dragRef.current = null;
+    if (activate && !drag.moved) openImage();
+  }
+
+  function handleKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    const step = event.shiftKey ? 18 : 8;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openImage();
+      return;
+    }
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const { x, y } = rotationRef.current;
+    if (event.key === "ArrowLeft") applyRotation(x, y - step);
+    if (event.key === "ArrowRight") applyRotation(x, y + step);
+    if (event.key === "ArrowUp") applyRotation(x - step, y);
+    if (event.key === "ArrowDown") applyRotation(x + step, y);
   }
 
   return (
-    <button
-      className="sport-orbit"
-      type="button"
-      onClick={onActivate}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetPointer}
-      aria-label={label}
-    >
-      <span className="orbit-scene" aria-hidden="true">
-        <span className="orbit-ring orbit-ring-a" />
-        <span className="orbit-ring orbit-ring-b" />
-        <span className="orbit-ring orbit-ring-c" />
-        <span className="ball-3d">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="orbit-particle orbit-particle-a" />
-        <span className="orbit-particle orbit-particle-b" />
-        <span className="orbit-particle orbit-particle-c" />
-      </span>
-      <span className="orbit-caption"><strong>Objeto 3D</strong>Mueve el cursor · abrir</span>
-    </button>
+    <section className="activity-sphere" ref={rootRef} aria-label="Últimas publicaciones deportivas">
+      <div
+        className="sphere-stage"
+        role="button"
+        tabIndex={0}
+        aria-label={`Esfera 3D de la última publicación: ${title}. Arrastra para girar y pulsa para ampliar la imagen.`}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={(event) => finishPointer(event, true)}
+        onPointerCancel={(event) => finishPointer(event, false)}
+        onKeyDown={handleKeyDown}
+      >
+        <span className="sphere-axis sphere-axis-one" aria-hidden="true" />
+        <span className="sphere-axis sphere-axis-two" aria-hidden="true" />
+        <span className="sphere-shadow" aria-hidden="true" />
+        <div className="sphere-float">
+          <span className="sphere-shell" aria-hidden="true">
+            <i className="sphere-seam sphere-seam-one" />
+            <i className="sphere-seam sphere-seam-two" />
+            <i className="sphere-seam sphere-seam-three" />
+          </span>
+          <div className="sphere-auto">
+            <div className="sphere-object" aria-hidden="true">
+              <span className="sphere-photo-face">
+                <img src={imageSrc} alt="" draggable={false} onError={showImageFallback} />
+                <small>Última publicación</small>
+              </span>
+              <span className="sphere-back-face">
+                <b>SJ</b>
+                <small>San Juan se mueve</small>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {activities.length > 0 && (
+        <ol className="sphere-latest">
+          {activities.slice(0, 3).map((latest, index) => (
+            <li key={latest.id}>
+              <button
+                type="button"
+                onClick={() => openActivityImage(latest)}
+                aria-label={`Ampliar publicación ${index + 1}: ${latest.title}`}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <img
+                  src={latest.imageUrl || "/hero-deporte.webp"}
+                  alt=""
+                  draggable={false}
+                  onError={showImageFallback}
+                />
+                <span>
+                  <strong>{latest.title}</strong>
+                  <small>{latest.municipality}</small>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+      <div className="sphere-copy">
+        <span>Gira sola · arrastra</span>
+        <strong>{title}</strong>
+        <small>Pulsa la esfera o una publicación para ampliar la imagen ↗</small>
+      </div>
+    </section>
   );
 }
 
@@ -277,6 +387,7 @@ function ActivityCard({
 
 export default function PublicView({
   heroActivity,
+  latestActivities,
   agendaActivities,
   recentActivities,
   disciplines,
@@ -295,8 +406,15 @@ export default function PublicView({
   const [layout, setLayout] = useState<AgendaLayout>("grid");
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<PublicActivity | null>(null);
+  const [imagePreview, setImagePreview] = useState<{
+    src: string;
+    alt: string;
+    title: string;
+  } | null>(null);
   const [shareNotice, setShareNotice] = useState("");
   const detailCloseRef = useRef<HTMLButtonElement>(null);
+  const imagePreviewCloseRef = useRef<HTMLButtonElement>(null);
+  const scrollAnimationRef = useRef(0);
 
   const municipalities = useMemo(
     () =>
@@ -334,6 +452,7 @@ export default function PublicView({
   }, [agendaActivities, mode, municipality, query, savedIds, sport]);
 
   const featured = heroActivity ?? agendaActivities[0] ?? null;
+  const sphereActivity = latestActivities[0] ?? featured;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -371,19 +490,30 @@ export default function PublicView({
   }, [filteredActivities.length, selectedActivity]);
 
   useEffect(() => {
-    if (!selectedActivity) return;
+    if (!selectedActivity && !imagePreview) return;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.setTimeout(() => detailCloseRef.current?.focus(), 0);
+    window.setTimeout(() => {
+      if (selectedActivity) detailCloseRef.current?.focus();
+      else imagePreviewCloseRef.current?.focus();
+    }, 0);
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedActivity(null);
+      if (event.key === "Escape") {
+        setSelectedActivity(null);
+        setImagePreview(null);
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = overflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [selectedActivity]);
+  }, [imagePreview, selectedActivity]);
+
+  useEffect(
+    () => () => window.cancelAnimationFrame(scrollAnimationRef.current),
+    [],
+  );
 
   function toggleSaved(activity: PublicActivity) {
     setSavedIds((current) => {
@@ -410,13 +540,44 @@ export default function PublicView({
     setMenuOpen(false);
     const target = document.getElementById(sectionId);
     if (!target) return;
+    window.cancelAnimationFrame(scrollAnimationRef.current);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    target.classList.remove("is-section-target");
-    window.setTimeout(() => {
+    const headerHeight = document.querySelector<HTMLElement>(".site-header")?.offsetHeight ?? 0;
+    const startY = window.scrollY;
+    const targetY = Math.max(0, startY + target.getBoundingClientRect().top - headerHeight);
+    const distance = targetY - startY;
+
+    const markArrival = () => {
       target.classList.add("is-section-target");
       window.setTimeout(() => target.classList.remove("is-section-target"), 1050);
-    }, reduced ? 0 : 360);
+    };
+
+    target.classList.remove("is-section-target");
+    if (Math.abs(distance) < 2) {
+      window.scrollTo(0, targetY);
+      markArrival();
+      return;
+    }
+
+    const duration = reduced
+      ? 360
+      : Math.min(1250, Math.max(760, Math.abs(distance) * 0.44));
+    let startedAt: number | null = null;
+    const ease = (progress: number) =>
+      progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    const step = (now: number) => {
+      if (startedAt === null) startedAt = now;
+      const progress = Math.min((now - startedAt) / duration, 1);
+      window.scrollTo(0, startY + distance * ease(progress));
+      if (progress < 1) {
+        scrollAnimationRef.current = window.requestAnimationFrame(step);
+      } else {
+        markArrival();
+      }
+    };
+    scrollAnimationRef.current = window.requestAnimationFrame(step);
   }
 
   function chooseLocality(name: string) {
@@ -479,24 +640,17 @@ export default function PublicView({
         </div>
       </header>
 
-      <nav className="section-index" aria-label="Índice rápido">
-        <span>Índice</span>
-        <button type="button" onClick={(event) => scrollToIndex(event, "inicio")}><b>00</b>Inicio</button>
-        <button type="button" onClick={(event) => scrollToIndex(event, "agenda")}><b>01</b>Agenda</button>
-        <button type="button" onClick={(event) => scrollToIndex(event, "localidades")}><b>02</b>Localidades</button>
-        <button type="button" onClick={(event) => scrollToIndex(event, "publicar")}><b>03</b>Publicar</button>
-      </nav>
-
       <main id="contenido">
         <section className="hero" id="inicio">
           <div className="hero-rule" aria-hidden="true"><span /></div>
           <div className="site-shell hero-layout">
             <div className="hero-copy" data-reveal>
               <p className="section-kicker"><span>Agenda oficial</span>{identityLine}</p>
-              <h1>El deporte de cada localidad, <em>en un solo lugar.</em></h1>
+              <h1><span>San Juan</span><em>se mueve.</em></h1>
+              <p className="hero-statement">Una agenda. Todas las localidades.</p>
               <p className="hero-lead">
-                Descubre actividades verificadas, encuentra lo que ocurre cerca de ti y envía
-                nuevas propuestas para la agenda deportiva de San Juan.
+                Descubre actividades verificadas, encuentra lo que ocurre cerca de ti
+                y suma tu comunidad al movimiento deportivo provincial.
               </p>
               <div className="hero-actions">
                 <a className="button button-primary" href="#agenda" onClick={(event) => scrollToIndex(event, "agenda")}>Explorar actividades</a>
@@ -504,41 +658,29 @@ export default function PublicView({
                   Proponer una actividad
                 </button>
               </div>
-              <div className="hero-summary" aria-label="Resumen de la plataforma">
-                <span><strong>{agendaActivities.length}</strong> próximas</span>
-                <span><strong>{municipalities.length}</strong> localidades</span>
-                <span><strong>{disciplines.length}</strong> disciplinas</span>
-              </div>
+              <button
+                className="hero-radar"
+                type="button"
+                onClick={(event) => scrollToIndex(event, "agenda")}
+              >
+                <span className="radar-pulse" aria-hidden="true"><i /><i /><b /></span>
+                <span>
+                  <small>Radar provincial</small>
+                  <strong>
+                    {agendaActivities.length
+                      ? `${agendaActivities.length} actividades listas para explorar`
+                      : "Agenda abierta a toda la provincia"}
+                  </strong>
+                </span>
+                <b aria-hidden="true">Explorar señal →</b>
+              </button>
             </div>
 
             <div className="hero-visual" data-reveal>
-              <article className="hero-feature">
-                <div className="hero-image">
-                  <img
-                    src={featured?.imageUrl || "/hero-deporte.webp"}
-                    alt={featured?.imageUrl ? `Imagen de ${featured.title}` : "Atleta en una pista de San Juan"}
-                    fetchPriority="high"
-                    decoding="async"
-                    onError={showImageFallback}
-                  />
-                  <span className="hero-image-code" aria-hidden="true">SJ / 22</span>
-                </div>
-                <div className="hero-feature-copy">
-                  <p><i aria-hidden="true" /> {featured ? "Próxima en agenda" : "Agenda provincial"}</p>
-                  <h2>{featured?.title || "La próxima actividad puede comenzar contigo."}</h2>
-                  {featured ? (
-                    <>
-                      <span>{formatActivityDate(featured)}</span>
-                      <button type="button" onClick={() => setSelectedActivity(featured)}>Ver actividad →</button>
-                    </>
-                  ) : (
-                    <button type="button" onClick={onOpenProposal}>Enviar propuesta →</button>
-                  )}
-                </div>
-              </article>
-              <SportOrbit
-                label={featured ? `Abrir actividad destacada: ${featured.title}` : "Proponer una actividad deportiva"}
-                onActivate={() => featured ? setSelectedActivity(featured) : onOpenProposal()}
+              <ActivitySphere
+                activity={sphereActivity}
+                activities={latestActivities}
+                onOpenImage={(src, alt, title) => setImagePreview({ src, alt, title })}
               />
             </div>
           </div>
@@ -785,6 +927,37 @@ export default function PublicView({
       </footer>
 
       {shareNotice && <div className="public-toast" role="status">{shareNotice}</div>}
+
+      {imagePreview && (
+        <div
+          className="image-preview-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setImagePreview(null);
+          }}
+        >
+          <figure
+            className="image-preview"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="image-preview-title"
+          >
+            <button
+              ref={imagePreviewCloseRef}
+              type="button"
+              aria-label="Cerrar imagen ampliada"
+              onClick={() => setImagePreview(null)}
+            >
+              ×
+            </button>
+            <img src={imagePreview.src} alt={imagePreview.alt} onError={showImageFallback} />
+            <figcaption>
+              <span>Última publicación</span>
+              <strong id="image-preview-title">{imagePreview.title}</strong>
+            </figcaption>
+          </figure>
+        </div>
+      )}
 
       {selectedActivity && (
         <div

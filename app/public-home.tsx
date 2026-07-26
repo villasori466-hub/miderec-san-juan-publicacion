@@ -186,6 +186,14 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
     publishedActivities[0] ??
     null;
 
+  const latestActivities = useMemo(
+    () =>
+      [...publishedActivities].sort(
+        (a, b) => (b.updatedAt ?? b.createdAt ?? 0) - (a.updatedAt ?? a.createdAt ?? 0),
+      ).slice(0, 3),
+    [publishedActivities],
+  );
+
   const disciplines = useMemo(
     () =>
       Array.from(
@@ -273,6 +281,7 @@ export default function PublicHome({ initialActivities }: PublicHomeProps) {
     <>
       <PublicView
         heroActivity={heroActivity}
+        latestActivities={latestActivities}
         agendaActivities={agendaActivities}
         recentActivities={recentActivities}
         disciplines={disciplines}
